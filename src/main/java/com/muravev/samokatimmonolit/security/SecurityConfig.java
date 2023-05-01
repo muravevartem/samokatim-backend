@@ -1,4 +1,4 @@
-package com.muravev.samokatimhandbook.security;
+package com.muravev.samokatimmonolit.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

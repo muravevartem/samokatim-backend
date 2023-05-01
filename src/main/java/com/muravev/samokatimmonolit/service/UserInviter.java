@@ -1,2 +1,4 @@
-package com.muravev.samokatimmonolit.service;public interface UserInviter {
+package com.muravev.samokatimmonolit.service;
+
+public interface UserInviter {
 }

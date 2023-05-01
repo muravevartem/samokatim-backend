@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "inventory_manufacture")
 @Getter
 @Setter
-public class InventoryManufacture {
+public class InventoryManufactureEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -27,7 +27,7 @@ public class InventoryManufacture {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        InventoryManufacture that = (InventoryManufacture) o;
+        InventoryManufactureEntity that = (InventoryManufactureEntity) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

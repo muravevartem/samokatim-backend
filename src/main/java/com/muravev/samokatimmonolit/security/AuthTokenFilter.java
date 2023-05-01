@@ -1,7 +1,7 @@
-package com.muravev.samokatimhandbook.security;
+package com.muravev.samokatimmonolit.security;
 
-import com.muravev.samokatimhandbook.error.ApiException;
-import com.muravev.samokatimhandbook.error.StatusCode;
+import com.muravev.samokatimmonolit.error.ApiException;
+import com.muravev.samokatimmonolit.error.StatusCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;

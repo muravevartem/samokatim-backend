@@ -1,2 +1,52 @@
-package com.muravev.samokatimmonolit.service.impl;public class EmployeeReaderImpl {
+package com.muravev.samokatimmonolit.service.impl;
+
+import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.error.ApiException;
+import com.muravev.samokatimmonolit.error.StatusCode;
+import com.muravev.samokatimmonolit.repo.EmployeeRepo;
+import com.muravev.samokatimmonolit.service.EmployeeReader;
+import com.muravev.samokatimmonolit.service.SecurityService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class EmployeeReaderImpl implements EmployeeReader {
+    private final EmployeeRepo employeeRepo;
+    private final SecurityService securityService;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EmployeeEntity> findAllColleagues(String keyword, boolean showRetired, Pageable pageable) {
+        EmployeeEntity employee = securityService.getCurrentEmployee();
+
+        if (keyword == null || keyword.isBlank()) {
+            return employeeRepo.findAllByOrganization(keyword, employee.getOrganization(), showRetired, pageable);
+        }
+        return employeeRepo.findAllByOrganization(employee.getOrganization(), showRetired, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EmployeeEntity findByIdAsEmployee(long id) {
+        EmployeeEntity currentEmployee = securityService.getCurrentEmployee();
+
+        return employeeRepo.findById(id)
+                .filter(employee -> Objects.equals(currentEmployee.getOrganization(), employee.getOrganization()))
+                .orElseThrow(() -> new ApiException(StatusCode.USER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EmployeeEntity findById(long id) {
+        return employeeRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.USER_NOT_FOUND));
+    }
 }

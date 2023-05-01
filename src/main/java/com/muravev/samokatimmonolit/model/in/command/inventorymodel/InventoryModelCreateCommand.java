@@ -1,4 +1,4 @@
-package com.muravev.samokatimmonolit.model.in.command;
+package com.muravev.samokatimmonolit.model.in.command.inventorymodel;
 
 import com.muravev.samokatimmonolit.model.InventoryType;
 import jakarta.validation.constraints.NotBlank;

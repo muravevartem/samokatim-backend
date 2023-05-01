@@ -1,2 +1,7 @@
-package com.muravev.samokatimmonolit.model.in;public class AuthIn {
+package com.muravev.samokatimmonolit.model.in;
+
+public record AuthIn(
+        String username,
+        String password
+) {
 }

@@ -1,4 +1,4 @@
-package com.muravev.samokatimmonolit.model.in.command;
+package com.muravev.samokatimmonolit.model.in.command.inventory;
 
 import com.muravev.samokatimmonolit.model.InventoryClass;
 import com.muravev.samokatimmonolit.model.in.InventoryModelIn;
