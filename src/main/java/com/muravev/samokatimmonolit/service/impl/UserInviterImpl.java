@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +65,11 @@ public class UserInviterImpl implements UserInviter {
         user.setEncodedPassword(passwordEncoder.encode(command.password()));
         user.setNotConfirmed(false);
         return user;
+    }
+
+    @Scheduled(cron = "0 0/30 * * * *", zone = "Europe/Samara")
+    public void cleanInvites() {
+        inviteRepo.deleteByExpirationTimeBefore(ZonedDateTime.now());
     }
 
 }
