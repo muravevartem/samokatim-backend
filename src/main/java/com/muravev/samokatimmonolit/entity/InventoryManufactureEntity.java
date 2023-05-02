@@ -21,7 +21,8 @@ public class InventoryManufactureEntity {
     private String name;
 
     @OneToMany(mappedBy = "manufacture")
-    private Set<InventoryEntity> inventories;
+    private Set<InventoryModelEntity> models;
+
 
     @Override
     public boolean equals(Object o) {

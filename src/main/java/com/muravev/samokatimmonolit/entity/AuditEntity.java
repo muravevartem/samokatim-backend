@@ -1,7 +1,6 @@
 package com.muravev.samokatimmonolit.entity;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,12 +19,16 @@ public abstract class AuditEntity {
     private ZonedDateTime createdAt;
 
     @CreatedBy
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_id")
     private UserEntity createdBy;
 
     @LastModifiedDate
     private ZonedDateTime modifiedAt;
 
     @LastModifiedBy
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by_id")
     private UserEntity modifiedBy;
 
 }

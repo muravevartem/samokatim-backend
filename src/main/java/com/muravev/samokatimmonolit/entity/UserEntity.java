@@ -1,6 +1,5 @@
 package com.muravev.samokatimmonolit.entity;
 
-import com.muravev.samokatimmonolit.model.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +8,9 @@ import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_t")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Getter
@@ -27,7 +25,6 @@ public abstract class UserEntity extends AuditEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String encodedPassword;
 
     private String tel;

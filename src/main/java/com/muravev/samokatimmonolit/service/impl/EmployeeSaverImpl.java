@@ -10,12 +10,14 @@ import com.muravev.samokatimmonolit.repo.EmployeeRepo;
 import com.muravev.samokatimmonolit.repo.UserRepo;
 import com.muravev.samokatimmonolit.service.EmployeeSaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
+import com.muravev.samokatimmonolit.service.UserInviter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,8 +28,8 @@ import java.util.UUID;
 public class EmployeeSaverImpl implements EmployeeSaver {
     private final UserRepo userRepo;
     private final EmployeeRepo employeeRepo;
-    private final PasswordEncoder passwordEncoder;
     private final SecurityService securityService;
+    private final UserInviter userInviter;
 
 
     @Override
@@ -46,22 +48,16 @@ public class EmployeeSaverImpl implements EmployeeSaver {
             throw new ApiException(StatusCode.USER_ALREADY_EXIST);
         }
 
-        String tempPass = generateTempPass();
-
         EmployeeEntity employee = new EmployeeEntity();
 
         employee.setOrganization(organization)
                 .setEmail(email.toLowerCase())
-                .setEncodedPassword(passwordEncoder.encode(tempPass))
                 .setNotConfirmed(true);
+        EmployeeEntity savedEmployee = userRepo.save(employee);
+        userInviter.invite(savedEmployee, Duration.ofMinutes(15));
 
-        userRepo.save(employee);
         log.info("Created employee {}", employee.getEmail());
         return employee;
-    }
-
-    private String generateTempPass() {
-        return UUID.randomUUID().toString().replace("-", "");
     }
 
     @Override

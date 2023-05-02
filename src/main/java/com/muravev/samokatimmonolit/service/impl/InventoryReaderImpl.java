@@ -56,7 +56,7 @@ public class InventoryReaderImpl implements InventoryReader {
 
         ClientEntity currentClient = securityService.getCurrentClient();
         RentEntity activeRent = inventory.getActiveRent();
-        if (activeRent != null && Objects.equals(activeRent.getClientEntity(), currentClient)) {
+        if (activeRent != null && Objects.equals(activeRent.getClient(), currentClient)) {
             return inventory;
         }
         throw new ApiException(StatusCode.INVENTORY_NOT_FOUND);

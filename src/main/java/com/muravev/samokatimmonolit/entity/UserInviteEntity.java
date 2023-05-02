@@ -3,44 +3,38 @@ package com.muravev.samokatimmonolit.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "rent")
+@Table(name = "user_invite")
 @Getter
 @Setter
-public class RentEntity {
+@Accessors(chain = true)
+public class UserInviteEntity extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private ZonedDateTime startTime;
-
-    private ZonedDateTime endTime;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inventory_id", nullable = false)
-    private InventoryEntity inventory;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private ClientEntity client;
+    private UserEntity user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tariff_id", nullable = false)
-    private OrganizationTariff tariff;
+    @Column(nullable = false)
+    private String code;
+
+    private ZonedDateTime expirationTime;
 
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RentEntity that = (RentEntity) o;
+        UserInviteEntity that = (UserInviteEntity) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

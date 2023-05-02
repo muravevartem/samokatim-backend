@@ -3,13 +3,11 @@ package com.muravev.samokatimmonolit.entity;
 import com.muravev.samokatimmonolit.event.AbstractInventoryEvent;
 import com.muravev.samokatimmonolit.model.InventoryClass;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
-import com.sun.source.tree.Tree;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.JoinFormula;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.*;
 
@@ -35,9 +33,11 @@ public class InventoryEntity extends AuditEntity {
     private OrganizationEntity organization;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private InventoryStatus status;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private InventoryClass inventoryClass;
 
     @OneToMany(mappedBy = "inventory")
@@ -45,7 +45,6 @@ public class InventoryEntity extends AuditEntity {
     private List<InventoryMonitoringEntity> monitoringRecord = new ArrayList<>();
 
     @OneToMany(mappedBy = "inventory")
-    @OrderBy("createdAt asc")
     private SortedSet<AbstractInventoryEvent> events = new TreeSet<>();
 
     @OneToMany(mappedBy = "inventory")

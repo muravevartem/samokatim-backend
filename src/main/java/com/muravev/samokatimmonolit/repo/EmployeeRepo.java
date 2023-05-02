@@ -11,14 +11,14 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
 
     @Query("""
             SELECT employee FROM EmployeeEntity employee
-            WHERE (employee.retired = FALSE OR :showRetired)
+            WHERE (employee.retired = FALSE OR :showRetired = TRUE)
                     AND employee.organization = :organization
             """)
     Page<EmployeeEntity> findAllByOrganization(OrganizationEntity organization, boolean showRetired, Pageable pageable);
 
     @Query("""
             SELECT employee FROM EmployeeEntity employee
-            WHERE (employee.retired = FALSE OR :showRetired)
+            WHERE (employee.retired = FALSE OR :showRetired = TRUE)
                     AND employee.organization = :organization
                     AND LOWER(employee.firstName) LIKE LOWER('%'||:keyword||'%')
                     AND LOWER(employee.lastName) LIKE LOWER('%'||:keyword||'%')
