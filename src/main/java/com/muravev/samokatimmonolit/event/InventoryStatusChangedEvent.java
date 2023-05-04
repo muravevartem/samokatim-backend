@@ -4,6 +4,7 @@ import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -17,6 +18,12 @@ public class InventoryStatusChangedEvent extends AbstractInventoryEvent {
 
     @JdbcTypeCode(SqlTypes.JSON)
     private Body body;
+
+    @Override
+    @Transient
+    public String getType() {
+        return TYPE;
+    }
 
     @Data
     @NoArgsConstructor

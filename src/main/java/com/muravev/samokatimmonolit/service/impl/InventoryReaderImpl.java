@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.service.impl;
 import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
+import com.muravev.samokatimmonolit.event.AbstractInventoryEvent;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.service.InventoryReader;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.SortedSet;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +64,13 @@ public class InventoryReaderImpl implements InventoryReader {
         throw new ApiException(StatusCode.INVENTORY_NOT_FOUND);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public SortedSet<AbstractInventoryEvent> findEventsById(long id) {
+        InventoryEntity inventory = inventoryRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+
+        return inventory.getEvents();
+    }
 
 }

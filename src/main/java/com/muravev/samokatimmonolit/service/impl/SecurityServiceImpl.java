@@ -14,21 +14,29 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SecurityServiceImpl implements SecurityService {
     private final UserRepo userRepo;
 
+
     @Override
-    public UserEntity getCurrentUser() {
+    public Optional<UserEntity> getOptCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         if (authentication == null)
             throw new ApiException(StatusCode.UNAUTHORIZED);
 
         String email = authentication.getPrincipal().toString();
-        return userRepo.findByEmail(email.toLowerCase())
+        return userRepo.findByEmail(email.toLowerCase());
+    }
+
+    @Override
+    public UserEntity getCurrentUser() {
+        return getOptCurrentUser()
                 .orElseThrow(() -> new ApiException(StatusCode.FORBIDDEN));
     }
 

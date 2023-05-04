@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 public abstract class AuditEntity {
 
     @CreatedDate
-    private ZonedDateTime createdAt;
+    private ZonedDateTime createdAt = ZonedDateTime.now();
 
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)

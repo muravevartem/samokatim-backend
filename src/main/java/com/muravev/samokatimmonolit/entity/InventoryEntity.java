@@ -4,6 +4,7 @@ import com.muravev.samokatimmonolit.event.AbstractInventoryEvent;
 import com.muravev.samokatimmonolit.model.InventoryClass;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
@@ -40,11 +41,11 @@ public class InventoryEntity extends AuditEntity {
     @Column(nullable = false)
     private InventoryClass inventoryClass;
 
-    @OneToMany(mappedBy = "inventory")
+    @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
     @OrderBy("createdAt asc")
     private List<InventoryMonitoringEntity> monitoringRecord = new ArrayList<>();
 
-    @OneToMany(mappedBy = "inventory")
+    @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
     private SortedSet<AbstractInventoryEvent> events = new TreeSet<>();
 
     @OneToMany(mappedBy = "inventory")

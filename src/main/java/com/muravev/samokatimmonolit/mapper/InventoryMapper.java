@@ -6,7 +6,8 @@ import org.mapstruct.Mapper;
 
 @Mapper(
         uses = {
-                InventoryModelMapper.class
+                InventoryModelMapper.class,
+                InventoryEventMappper.class
         }
 )
 public interface InventoryMapper {

@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Table(name = "inventory_manufacture")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class InventoryManufactureEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

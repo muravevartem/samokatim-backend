@@ -1,8 +1,10 @@
 package com.muravev.samokatimmonolit.controller;
 
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
+import com.muravev.samokatimmonolit.mapper.InventoryEventMappper;
 import com.muravev.samokatimmonolit.mapper.InventoryMapper;
 import com.muravev.samokatimmonolit.model.in.command.inventory.*;
+import com.muravev.samokatimmonolit.model.out.InventoryEventOut;
 import com.muravev.samokatimmonolit.model.out.InventoryFullOut;
 import com.muravev.samokatimmonolit.service.InventoryReader;
 import com.muravev.samokatimmonolit.service.InventorySaver;
@@ -13,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/inventories")
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ public class InventoryController {
     private final InventorySaver inventorySaver;
     private final InventoryReader inventoryReader;
     private final InventoryMapper inventoryMapper;
+    private final InventoryEventMappper inventoryEventMappper;
+
 
     @GetMapping(params = {"page", "size", "my", "keyword"})
     @Secured("ROLE_LOCAL_ADMIN")
@@ -36,10 +42,18 @@ public class InventoryController {
     }
 
     @GetMapping("/{id}")
-    @Secured("ROLE_CLIENT")
+    @Secured({"ROLE_CLIENT"})
     public InventoryFullOut findByIdAsClient(@PathVariable long id) {
         InventoryEntity byIdAsClient = inventoryReader.findByIdAsClient(id);
         return inventoryMapper.toFullDto(byIdAsClient);
+    }
+
+    @GetMapping("/{id}/events")
+    @Secured("ROLE_LOCAL_ADMIN")
+    public List<InventoryEventOut> findAllEventsById(@PathVariable long id) {
+        return inventoryReader.findEventsById(id).stream()
+                .map(inventoryEventMappper::toDto)
+                .toList();
     }
 
 

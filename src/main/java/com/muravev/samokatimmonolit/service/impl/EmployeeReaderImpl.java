@@ -1,6 +1,7 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.repo.EmployeeRepo;
@@ -27,10 +28,11 @@ public class EmployeeReaderImpl implements EmployeeReader {
     public Page<EmployeeEntity> findAllColleagues(String keyword, boolean showRetired, Pageable pageable) {
         EmployeeEntity employee = securityService.getCurrentEmployee();
 
+        OrganizationEntity organization = employee.getOrganization();
         if (keyword == null || keyword.isBlank()) {
-            return employeeRepo.findAllByOrganization(keyword, employee.getOrganization(), showRetired, pageable);
+            return employeeRepo.findAllByOrganization(organization, showRetired, pageable);
         }
-        return employeeRepo.findAllByOrganization(employee.getOrganization(), showRetired, pageable);
+        return employeeRepo.findAllByOrganization(keyword, organization, showRetired, pageable);
     }
 
     @Override

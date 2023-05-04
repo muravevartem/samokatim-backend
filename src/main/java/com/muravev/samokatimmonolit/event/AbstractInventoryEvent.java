@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.event;
 import com.muravev.samokatimmonolit.entity.AuditEntity;
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
@@ -33,6 +34,8 @@ public abstract class AbstractInventoryEvent extends AuditEntity implements Comp
     }
 
     public abstract Object getBody();
+
+    public abstract String getType();
 
     @Override
     public int compareTo(AbstractInventoryEvent o) {
