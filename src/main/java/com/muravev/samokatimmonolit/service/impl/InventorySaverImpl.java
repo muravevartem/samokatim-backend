@@ -45,6 +45,7 @@ public class InventorySaverImpl implements InventorySaver {
         inventory.setModel(inventoryModelRepo.getReferenceById(model.id()));
         inventory.setOrganization(organization);
         inventory.setAlias(createCommand.alias());
+        inventory.setSupportsTelemetry(createCommand.supportsTelemetry());
         inventory.setStatus(InventoryStatus.UNDER_REPAIR);//По умолчанию на старте числиться в ремонте
         return inventoryRepo.save(inventory);
     }

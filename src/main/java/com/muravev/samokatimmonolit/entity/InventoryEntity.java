@@ -41,6 +41,9 @@ public class InventoryEntity extends AuditEntity {
     @Column(nullable = false)
     private InventoryClass inventoryClass;
 
+    @Column(nullable = false)
+    private boolean supportsTelemetry;
+
     @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
     @OrderBy("createdAt asc")
     private List<InventoryMonitoringEntity> monitoringRecord = new ArrayList<>();

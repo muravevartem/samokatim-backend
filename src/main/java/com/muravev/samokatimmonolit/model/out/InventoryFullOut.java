@@ -13,6 +13,7 @@ public record InventoryFullOut(
         InventoryModelFullOut model,
         OrganizationFullOut organization,
         InventoryStatus status,
+        boolean supportsTelemetry,
         GeoPositionOut lastMonitoringRecord,
         List<InventoryEventOut> events,
         @JsonFormat(pattern = JsonTimeFormat.ISO_DATE_TIME)

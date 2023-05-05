@@ -13,6 +13,8 @@ public record InventoryCreateCommand(
         @Valid
         InventoryModelIn model,
         @NotNull
-        InventoryClass inventoryClass
+        InventoryClass inventoryClass,
+        @NotNull
+        boolean supportsTelemetry
 ) {
 }
