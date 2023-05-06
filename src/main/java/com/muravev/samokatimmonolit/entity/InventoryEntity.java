@@ -44,6 +44,10 @@ public class InventoryEntity extends AuditEntity {
     @Column(nullable = false)
     private boolean supportsTelemetry;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "office_id")
+    private OfficeEntity office;
+
     @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
     @OrderBy("createdAt asc")
     private List<InventoryMonitoringEntity> monitoringRecord = new ArrayList<>();

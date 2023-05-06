@@ -25,7 +25,9 @@ public enum StatusCode {
 
     ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Организация не найдена"),
     ORGANIZATION_INVALID_INN(HttpStatus.BAD_REQUEST, "Не валидный ИНН"),
-    ORGANIZATION_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Организация уже существует")
+    ORGANIZATION_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Организация уже существует"),
+
+    OFFICE_NOT_FOUND(HttpStatus.NOT_FOUND, "Офис проката не найден"),
     ;
 
     private final HttpStatus httpStatus;

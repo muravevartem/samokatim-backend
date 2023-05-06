@@ -3,11 +3,10 @@ package com.muravev.samokatimmonolit.integration.dadata.service.impl;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.integration.dadata.model.request.DadataOrganizationRequest;
 import com.muravev.samokatimmonolit.integration.dadata.model.response.DadataOrganizationResponse;
-import com.muravev.samokatimmonolit.integration.dadata.model.response.DadataSuggestionsResponse;
+import com.muravev.samokatimmonolit.integration.dadata.model.response.DadataSuggestionsOrganizationResponse;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataOrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.Op;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +31,12 @@ public class DadataOrganizationServiceImpl implements DadataOrganizationService 
 
     @Override
     public Optional<OrganizationEntity> getOneByInn(String inn) {
-        ResponseEntity<DadataSuggestionsResponse> response = dadataClient.postForEntity(
+        ResponseEntity<DadataSuggestionsOrganizationResponse> response = dadataClient.postForEntity(
                 INN_ENDPOINT,
                 new DadataOrganizationRequest(inn),
-                DadataSuggestionsResponse.class
+                DadataSuggestionsOrganizationResponse.class
         );
-        DadataSuggestionsResponse body = response.getBody();
+        DadataSuggestionsOrganizationResponse body = response.getBody();
 
         Objects.requireNonNull(body);
 
