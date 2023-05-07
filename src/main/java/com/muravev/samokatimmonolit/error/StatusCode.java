@@ -2,7 +2,6 @@ package com.muravev.samokatimmonolit.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.metrics.Stat;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -28,6 +27,11 @@ public enum StatusCode {
     ORGANIZATION_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Организация уже существует"),
 
     OFFICE_NOT_FOUND(HttpStatus.NOT_FOUND, "Офис проката не найден"),
+
+    TARIFF_NOT_FOUND(HttpStatus.NOT_FOUND, "Тариф не найден"),
+    TARIFF_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Тариф данного типа уже существует", "Удалите существующий тариф аналогичного типа"),
+
+    RENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Аренда не найдена"),
     ;
 
     private final HttpStatus httpStatus;

@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.service.impl;
 import com.muravev.samokatimmonolit.entity.EmployeeEntity;
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
+import com.muravev.samokatimmonolit.entity.OrganizationTariffEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
@@ -11,6 +12,7 @@ import com.muravev.samokatimmonolit.model.in.InventoryModelIn;
 import com.muravev.samokatimmonolit.model.in.command.inventory.*;
 import com.muravev.samokatimmonolit.repo.InventoryModelRepo;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
+import com.muravev.samokatimmonolit.repo.TariffRepo;
 import com.muravev.samokatimmonolit.service.InventorySaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class InventorySaverImpl implements InventorySaver {
     private final InventoryRepo inventoryRepo;
     private final InventoryModelRepo inventoryModelRepo;
+    private final TariffRepo tariffRepo;
 
     private final SecurityService securityService;
 
@@ -53,8 +58,7 @@ public class InventorySaverImpl implements InventorySaver {
     @Override
     @Transactional
     public InventoryEntity changeField(long id, InventoryChangeStatusCommand command) {
-        InventoryEntity inventory = inventoryRepo.findById(id)
-                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+        InventoryEntity inventory = getOneAsEmployee(id);
         inventory.setStatus(command.status());
         eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, command.status()));
         return inventory;
@@ -63,8 +67,7 @@ public class InventorySaverImpl implements InventorySaver {
     @Override
     @Transactional
     public InventoryEntity changeField(long id, InventoryChangeAliasCommand command) {
-        InventoryEntity inventory = inventoryRepo.findById(id)
-                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+        InventoryEntity inventory = getOneAsEmployee(id);
         inventory.setAlias(command.alias());
         return inventory;
     }
@@ -72,8 +75,7 @@ public class InventorySaverImpl implements InventorySaver {
     @Override
     @Transactional
     public InventoryEntity changeField(long id, InventoryChangeModelCommand command) {
-        InventoryEntity inventory = inventoryRepo.findById(id)
-                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+        InventoryEntity inventory = getOneAsEmployee(id);
         InventoryModelIn model = command.model();
         inventory.setModel(inventoryModelRepo.getReferenceById(model.id()));
         return inventory;
@@ -82,10 +84,37 @@ public class InventorySaverImpl implements InventorySaver {
     @Override
     @Transactional
     public InventoryEntity changeField(long id, InventoryChangeClassCommand command) {
-        InventoryEntity inventory = inventoryRepo.findById(id)
-                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+        InventoryEntity inventory = getOneAsEmployee(id);
         inventory.setInventoryClass(command.inventoryClass());
         return inventory;
+    }
+
+    @Override
+    @Transactional
+    public InventoryEntity changeField(long id, InventoryAddTariffCommand command) {
+        InventoryEntity inventory = getOneAsEmployee(id);
+        EmployeeEntity employee = securityService.getCurrentEmployee();
+        OrganizationTariffEntity tariff = tariffRepo.findById(command.tariffId())
+                .filter(t -> Objects.equals(employee.getOrganization(), t.getOrganization()))
+                .filter(t -> !t.isDeleted())
+                .orElseThrow(() -> new ApiException(StatusCode.TARIFF_NOT_FOUND));
+        inventory.getTariffs().add(tariff);
+        return inventory;
+    }
+
+    @Override
+    @Transactional
+    public InventoryEntity changeField(long id, InventoryDeleteTariffCommand command) {
+        InventoryEntity inventory = getOneAsEmployee(id);
+        inventory.getTariffs().remove(tariffRepo.getReferenceById(command.tariffId()));
+        return inventory;
+    }
+
+    private InventoryEntity getOneAsEmployee(long id) {
+        EmployeeEntity employee = securityService.getCurrentEmployee();
+        return inventoryRepo.findById(id)
+                .filter(i -> Objects.equals(i.getOrganization(), employee.getOrganization()))
+                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
     }
 
     @Override

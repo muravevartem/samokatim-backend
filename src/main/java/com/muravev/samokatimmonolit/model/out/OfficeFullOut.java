@@ -10,6 +10,7 @@ public record OfficeFullOut(
         double lng,
         String address,
         int capacity,
+        boolean closed,
         OrganizationCompactOut organization,
         Set<InventoryFullOut> inventories,
         List<OfficeScheduleOut> schedules

@@ -12,6 +12,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH")
                 .allowedOrigins(
                         "http://localhost:3000",
+                        "http://localhost:3001",
                         "http://admin.1304294-cu57808.tw1.ru",
                         "https://admin.1304294-cu57808.tw1.ru",
                         "http://1304294-cu57808.tw1.ru",

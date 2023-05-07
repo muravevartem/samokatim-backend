@@ -5,6 +5,7 @@ import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.AbstractInventoryEvent;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
+import com.muravev.samokatimmonolit.model.in.MapViewIn;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.service.InventoryReader;
 import com.muravev.samokatimmonolit.service.SecurityService;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
 
@@ -25,6 +27,39 @@ public class InventoryReaderImpl implements InventoryReader {
     private final InventoryRepo inventoryRepo;
 
     private final SecurityService securityService;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Collection<InventoryEntity> findAllInViewForRent(MapViewIn view) {
+        var northEast = view.getNorthEast();
+        var southWest = view.getSouthWest();
+        log.info("[GEO] getting location ne-lat: {} ne-lng: {} sw-lat: {} sw-lng: {}",
+                northEast.lat(), northEast.lng(), southWest.lat(), southWest.lng());
+        return inventoryRepo.findAllByViewAndStatus(
+                northEast.lat(),
+                northEast.lng(),
+                southWest.lat(),
+                southWest.lng(),
+                InventoryStatus.PENDING
+        );
+    }
+
+    @Override
+    public Collection<InventoryEntity> findAllInViewAndRentedByMe(MapViewIn view) {
+        ClientEntity currentClient = securityService.getCurrentClient();
+
+        var northEast = view.getNorthEast();
+        var southWest = view.getSouthWest();
+        log.info("[GEO] getting location ne-lat: {} ne-lng: {} sw-lat: {} sw-lng: {}",
+                northEast.lat(), northEast.lng(), southWest.lat(), southWest.lng());
+        return inventoryRepo.findAllRentedByView(
+                northEast.lat(),
+                northEast.lng(),
+                southWest.lat(),
+                southWest.lng(),
+                currentClient
+        );
+    }
 
     @Override
     @Transactional(readOnly = true)

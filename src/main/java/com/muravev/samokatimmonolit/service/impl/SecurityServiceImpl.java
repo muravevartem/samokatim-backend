@@ -9,6 +9,7 @@ import com.muravev.samokatimmonolit.repo.UserRepo;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +43,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public EmployeeEntity getCurrentEmployee() {
-        UserEntity currentUser = getCurrentUser();
+        UserEntity currentUser = Hibernate.unproxy(getCurrentUser(), UserEntity.class);
         if (currentUser instanceof EmployeeEntity employee) {
             return employee;
         }
@@ -51,7 +52,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public ClientEntity getCurrentClient() {
-        UserEntity currentUser = getCurrentUser();
+        UserEntity currentUser = Hibernate.unproxy(getCurrentUser(), UserEntity.class);
         if (currentUser instanceof ClientEntity client) {
             return client;
         }

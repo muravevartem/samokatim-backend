@@ -7,6 +7,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Entity
@@ -47,6 +51,18 @@ public class OfficeEntity extends AuditEntity {
     )
     @OrderBy("day")
     private List<OfficeScheduleEmbeddable> schedules = new ArrayList<>();
+
+    public boolean isClosed() {
+        DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
+        OffsetTime now = OffsetTime.now();
+        return schedules.stream()
+                .filter(schedule -> currentDay.equals(schedule.getDay()))
+                .filter(schedule -> now.isAfter(schedule.getStart()))
+                .filter(schedule -> now.isBefore(schedule.getEnd()))
+                .findFirst()
+                .isEmpty();
+    }
+
 
     @Override
     public boolean equals(Object o) {

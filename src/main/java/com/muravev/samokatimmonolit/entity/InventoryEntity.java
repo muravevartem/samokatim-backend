@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.JoinFormula;
+import org.hibernate.annotations.Where;
 
 import java.util.*;
 
@@ -57,6 +58,13 @@ public class InventoryEntity extends AuditEntity {
 
     @OneToMany(mappedBy = "inventory")
     private Set<RentEntity> rents = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "inventory_tariff",
+            joinColumns = @JoinColumn(name = "inventory_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "tariff_id", nullable = false))
+    @Where(clause = "deleted_at is null")
+    private SortedSet<OrganizationTariffEntity> tariffs = new TreeSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinFormula("""

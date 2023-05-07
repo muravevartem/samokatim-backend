@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -41,11 +42,15 @@ public class OrganizationEntity extends AuditEntity {
     @Column(nullable = false)
     private OrganizationStatus status;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
     private Set<InventoryEntity> inventories = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
     private Set<EmployeeEntity> employees = new HashSet<>();
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
+    @Where(clause = "deleted_at is null")
+    private Set<OrganizationTariffEntity> tariffs = new HashSet<>();
 
 
     @Override

@@ -14,5 +14,8 @@ public interface InventorySaver {
 
     InventoryEntity changeField(long id, InventoryChangeClassCommand command);
 
+    InventoryEntity changeField(long id, InventoryAddTariffCommand command);
+    InventoryEntity changeField(long id, InventoryDeleteTariffCommand command);
+
     void delete(long id);
 }

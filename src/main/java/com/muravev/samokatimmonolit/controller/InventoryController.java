@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.controller;
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import com.muravev.samokatimmonolit.mapper.InventoryEventMappper;
 import com.muravev.samokatimmonolit.mapper.InventoryMapper;
+import com.muravev.samokatimmonolit.model.in.MapViewIn;
 import com.muravev.samokatimmonolit.model.in.command.inventory.*;
 import com.muravev.samokatimmonolit.model.out.InventoryEventOut;
 import com.muravev.samokatimmonolit.model.out.InventoryFullOut;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -41,6 +43,14 @@ public class InventoryController {
         return inventoryMapper.toFullDto(byIdAsEmployee);
     }
 
+    @PostMapping("/map-square")
+    public List<InventoryFullOut> getInventoriesInSquare(@Valid @RequestBody MapViewIn view) {
+        Collection<InventoryEntity> inView = inventoryReader.findAllInViewForRent(view);
+        return inView.stream()
+                .map(inventoryMapper::toFullDto)
+                .toList();
+    }
+
     @GetMapping("/{id}")
     @Secured({"ROLE_CLIENT"})
     public InventoryFullOut findByIdAsClient(@PathVariable long id) {
@@ -62,6 +72,21 @@ public class InventoryController {
     public InventoryFullOut create(@RequestBody @Valid InventoryCreateCommand command) {
         InventoryEntity createdInventory = inventorySaver.create(command);
         return inventoryMapper.toFullDto(createdInventory);
+    }
+
+    @PostMapping("/{id}/tariffs")
+    @Secured("ROLE_LOCAL_ADMIN")
+    public InventoryFullOut addTariff(@PathVariable long id,
+                                      @RequestBody @Valid InventoryAddTariffCommand command) {
+        InventoryEntity updatedInventory = inventorySaver.changeField(id, command);
+        return inventoryMapper.toFullDto(updatedInventory);
+    }
+
+    @DeleteMapping("/{id}/tariffs/{tariffId}")
+    @Secured("ROLE_LOCAL_ADMIN")
+    public InventoryFullOut deleteTariff(@PathVariable long id, @PathVariable long tariffId) {
+        InventoryEntity inventory = inventorySaver.changeField(id, new InventoryDeleteTariffCommand(tariffId));
+        return inventoryMapper.toFullDto(inventory);
     }
 
     @PutMapping("/{id}/status")

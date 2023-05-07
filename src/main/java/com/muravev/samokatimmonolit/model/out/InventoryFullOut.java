@@ -16,6 +16,7 @@ public record InventoryFullOut(
         boolean supportsTelemetry,
         GeoPositionOut lastMonitoringRecord,
         List<InventoryEventOut> events,
+        List<TariffOut> tariffs,
         @JsonFormat(pattern = JsonTimeFormat.ISO_DATE_TIME)
         ZonedDateTime createdAt
 ) {

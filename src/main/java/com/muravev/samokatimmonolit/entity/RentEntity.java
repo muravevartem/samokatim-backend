@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import java.time.ZonedDateTime;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Table(name = "rent")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class RentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -33,7 +35,7 @@ public class RentEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tariff_id", nullable = false)
-    private OrganizationTariff tariff;
+    private OrganizationTariffEntity tariff;
 
 
     @Override
