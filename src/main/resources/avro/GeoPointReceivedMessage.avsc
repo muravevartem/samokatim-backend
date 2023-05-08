@@ -1,0 +1,11 @@
+{
+  "namespace": "com.muravev.samokatimmessage",
+  "type": "record",
+  "name": "GeoPointReceivedMessage",
+  "fields": [
+    {
+      "name": "id",
+      "type": "long"
+    }
+  ]
+}
