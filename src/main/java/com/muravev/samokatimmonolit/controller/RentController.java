@@ -8,6 +8,8 @@ import com.muravev.samokatimmonolit.service.RentReader;
 import com.muravev.samokatimmonolit.service.RentSaver;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +19,19 @@ public class RentController {
     private final RentSaver rentSaver;
     private final RentReader rentReader;
     private final RentMapper rentMapper;
+
+
+    @GetMapping(params = {"my", "page", "size"})
+    public Page<RentOut> findMyAll(Pageable pageable) {
+        return rentReader.findMyAll(pageable)
+                .map(rentMapper::toDto);
+    }
+
+    @GetMapping("/{id}")
+    public RentOut findMyById(@PathVariable long id) {
+        RentEntity rent = rentReader.findMyById(id);
+        return rentMapper.toDto(rent);
+    }
 
 
     @PostMapping
