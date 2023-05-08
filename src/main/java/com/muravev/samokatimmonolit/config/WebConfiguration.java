@@ -13,8 +13,8 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",
                         "http://localhost:3001",
-                        "http://admin.1304294-cu57808.tw1.ru",
-                        "https://admin.1304294-cu57808.tw1.ru",
+                        "http://b2b.1304294-cu57808.tw1.ru",
+                        "https://b2b.1304294-cu57808.tw1.ru",
                         "http://1304294-cu57808.tw1.ru",
                         "https://1304294-cu57808.tw1.ru"
                 )
