@@ -13,6 +13,7 @@ public enum StatusCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера"),
 
     INVENTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Инвентарь не найден"),
+    INVENTORY_IS_USED(HttpStatus.BAD_REQUEST, "Инвенетарь в аренде"),
 
     INVENTORY_MODEL_NOT_FOUND(HttpStatus.NOT_FOUND, "Модель инвентаря не найдена"),
     INVENTORY_MODEL_CANNOT_REMOVED(HttpStatus.BAD_REQUEST, "Модель инвентаря не может быть удалена"),

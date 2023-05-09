@@ -1,13 +1,11 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
-import com.muravev.samokatimmonolit.entity.OfficeEntity;
-import com.muravev.samokatimmonolit.entity.OfficeScheduleEmbeddable;
-import com.muravev.samokatimmonolit.entity.OrganizationEntity;
+import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataAddressService;
 import com.muravev.samokatimmonolit.model.Address;
 import com.muravev.samokatimmonolit.model.in.GeoPointIn;
 import com.muravev.samokatimmonolit.model.in.command.office.OfficeCreateCommand;
+import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.repo.OfficeRepo;
 import com.muravev.samokatimmonolit.service.OfficeWriter;
 import com.muravev.samokatimmonolit.service.SecurityService;
@@ -25,6 +23,8 @@ import java.util.List;
 @Slf4j
 public class OfficeWriterImpl implements OfficeWriter {
     private final OfficeRepo officeRepo;
+    private final InventoryRepo inventoryRepo;
+
     private final DadataAddressService addressService;
     private final SecurityService securityService;
 
@@ -61,4 +61,5 @@ public class OfficeWriterImpl implements OfficeWriter {
 
         return officeRepo.save(office);
     }
+
 }

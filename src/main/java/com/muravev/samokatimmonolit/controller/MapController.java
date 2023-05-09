@@ -21,4 +21,11 @@ public class MapController {
     public MapViewOut getClientView(@Valid @RequestBody MapViewIn viewIn) {
         return mapService.getClientView(viewIn);
     }
+
+
+    @PostMapping(params = {"my", "office"})
+    public MapViewOut getMyOfficesView(@Valid @RequestBody MapViewIn viewIn) {
+        return mapService.getMyOfficesView(viewIn);
+    }
+
 }

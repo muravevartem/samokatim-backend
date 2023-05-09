@@ -1,10 +1,13 @@
 package com.muravev.samokatimmonolit.model.out;
 
-import java.util.Collection;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Collection;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record MapViewOut(
         Collection<InventoryFullOut> free,
-        Collection<RentOut> rented
+        Collection<RentOut> rented,
+        Collection<OfficeFullOut> offices
 ) {
 }

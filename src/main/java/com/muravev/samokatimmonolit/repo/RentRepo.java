@@ -40,4 +40,11 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
             WHERE rent.client = :client AND rent.endTime IS NOT NULL
             """)
     Page<RentEntity> findAllCompletedRents(ClientEntity client, Pageable pageable);
+
+    @Query("""
+            SELECT rent FROM RentEntity rent
+            WHERE rent.client = :client AND rent.endTime IS NULL
+            
+            """)
+    List<RentEntity> findAllActiveByClient(ClientEntity client);
 }

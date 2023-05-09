@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Where;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -42,6 +43,7 @@ public class OfficeEntity extends AuditEntity {
     private OrganizationEntity organization;
 
     @OneToMany(mappedBy = "office")
+    @Where(clause = "status = 'PENDING'")
     private Set<InventoryEntity> inventories = new HashSet<>();
 
     @ElementCollection

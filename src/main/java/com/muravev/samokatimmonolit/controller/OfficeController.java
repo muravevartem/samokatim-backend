@@ -21,6 +21,11 @@ public class OfficeController {
     private final OfficeReader officeReader;
 
 
+    @GetMapping(params = {"my", "keyword"})
+    public Page<OfficeFullOut> getAllMy(@RequestParam String keyword, Pageable pageable) {
+        Page<OfficeEntity> allMyOffices = officeReader.getAllMyOffices(keyword, pageable);
+        return allMyOffices.map(officeMapper::toFullDto);
+    }
 
     @GetMapping(params = "my")
     public Page<OfficeFullOut> getAllMy(Pageable pageable) {
@@ -34,10 +39,10 @@ public class OfficeController {
         return officeMapper.toFullDto(oneMy);
     }
 
-
     @PostMapping
     public OfficeFullOut create(@RequestBody @Valid OfficeCreateCommand command) {
         OfficeEntity office = officeWriter.create(command);
         return officeMapper.toFullDto(office);
     }
+
 }

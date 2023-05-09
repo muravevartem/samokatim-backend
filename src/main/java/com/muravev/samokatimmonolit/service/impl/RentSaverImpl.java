@@ -50,6 +50,9 @@ public class RentSaverImpl implements RentSaver {
                 .filter(not(OrganizationTariffEntity::isDeleted))
                 .orElseThrow(() -> new ApiException(StatusCode.TARIFF_NOT_FOUND));
 
+        if (inventory.getOffice() != null)
+            inventory.setOffice(null);
+
         inventory.setStatus(InventoryStatus.IN_WORK);
         eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.IN_WORK));
 

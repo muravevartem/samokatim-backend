@@ -5,4 +5,5 @@ import com.muravev.samokatimmonolit.model.out.MapViewOut;
 
 public interface MapService {
     MapViewOut getClientView(MapViewIn viewIn);
+    MapViewOut getMyOfficesView(MapViewIn viewIn);
 }

@@ -28,6 +28,13 @@ public class RentController {
     private final RentMapper rentMapper;
     private final InventoryMonitoringRecordMapper monitoringRecordMapper;
 
+    @GetMapping(params = {"my", "active"})
+    public List<RentOut> findMyActiveAll() {
+        List<RentEntity> activeRents = rentReader.findMyActiveAll();
+        return activeRents.stream()
+                .map(rentMapper::toDto)
+                .toList();
+    }
 
     @GetMapping(params = {"my", "page", "size"})
     public Page<RentCompactOut> findMyAll(Pageable pageable) {

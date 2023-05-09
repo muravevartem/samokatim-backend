@@ -84,6 +84,15 @@ public class InventoryEntity extends AuditEntity {
             """)
     private InventoryMonitoringEntity lastMonitoringRecord;
 
+    public void setOffice(OfficeEntity office) {
+        if (this.office != null) {
+            this.office.getInventories().remove(this);
+        }
+        this.office = office;
+        if (this.office != null) {
+            this.office.getInventories().add(this);
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

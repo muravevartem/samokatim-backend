@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedSet;
 
 public interface RentReader {
@@ -16,6 +17,8 @@ public interface RentReader {
     Page<RentEntity> findAllCompletedByClient(ClientEntity client, Pageable pageable);
 
     Page<RentEntity> findMyAll(Pageable pageable);
+
+    List<RentEntity> findMyActiveAll();
 
     RentEntity findMyById(long id);
 

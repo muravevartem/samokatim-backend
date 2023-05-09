@@ -12,6 +12,7 @@ public record InventoryFullOut(
         String alias,
         InventoryModelFullOut model,
         OrganizationFullOut organization,
+        OfficeCompactOut office,
         InventoryStatus status,
         boolean supportsTelemetry,
         GeoPositionOut lastMonitoringRecord,

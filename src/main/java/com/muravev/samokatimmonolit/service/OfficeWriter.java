@@ -7,4 +7,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface OfficeWriter {
     OfficeEntity create(@RequestBody @Valid OfficeCreateCommand command);
+
 }

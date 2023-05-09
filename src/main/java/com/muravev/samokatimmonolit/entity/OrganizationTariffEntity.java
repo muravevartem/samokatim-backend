@@ -34,6 +34,9 @@ public class OrganizationTariffEntity extends AuditEntity implements Comparable<
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column
+    private BigDecimal initialPrice;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrganizationTariffType type;

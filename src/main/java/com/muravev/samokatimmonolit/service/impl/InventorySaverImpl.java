@@ -10,6 +10,7 @@ import com.muravev.samokatimmonolit.model.in.InventoryModelIn;
 import com.muravev.samokatimmonolit.model.in.command.inventory.*;
 import com.muravev.samokatimmonolit.repo.InventoryModelRepo;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
+import com.muravev.samokatimmonolit.repo.OfficeRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
 import com.muravev.samokatimmonolit.service.InventorySaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
@@ -33,6 +34,7 @@ public class InventorySaverImpl implements InventorySaver {
     private final InventoryRepo inventoryRepo;
     private final InventoryModelRepo inventoryModelRepo;
     private final TariffRepo tariffRepo;
+    private final OfficeRepo officeRepo;
 
     private final SecurityService securityService;
 
@@ -110,6 +112,22 @@ public class InventorySaverImpl implements InventorySaver {
     public InventoryEntity changeField(long id, InventoryDeleteTariffCommand command) {
         InventoryEntity inventory = getOneAsEmployee(id);
         inventory.getTariffs().remove(tariffRepo.getReferenceById(command.tariffId()));
+        return inventory;
+    }
+
+    @Override
+    @Transactional
+    public InventoryEntity changeField(long id, InventoryChangeOfficeCommand command) {
+        InventoryEntity inventory = getOneAsEmployee(id);
+        inventory.setOffice(officeRepo.getReferenceById(command.officeId()));
+        return inventory;
+    }
+
+    @Override
+    @Transactional
+    public InventoryEntity changeField(long id, InventoryResetOfficeCommand command) {
+        InventoryEntity inventory = getOneAsEmployee(id);
+        inventory.setOffice(null);
         return inventory;
     }
 

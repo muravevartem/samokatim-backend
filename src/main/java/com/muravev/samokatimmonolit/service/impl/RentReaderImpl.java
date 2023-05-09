@@ -64,6 +64,13 @@ public class RentReaderImpl implements RentReader {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<RentEntity> findMyActiveAll() {
+        ClientEntity currentClient = securityService.getCurrentClient();
+        return rentRepo.findAllActiveByClient(currentClient);
+    }
+
+    @Override
     public RentEntity findMyById(long id) {
         ClientEntity currentClient = securityService.getCurrentClient();
         RentEntity rent = rentRepo.findByIdAndClient(id, currentClient)

@@ -36,7 +36,7 @@ public class InventoryController {
                 .map(inventoryMapper::toFullDto);
     }
 
-    @GetMapping(value = "/{id}",params = "my")
+    @GetMapping(value = "/{id}", params = "my")
     @Secured("ROLE_LOCAL_ADMIN")
     public InventoryFullOut findByIdAsEmployee(@PathVariable long id) {
         InventoryEntity byIdAsEmployee = inventoryReader.findByIdAsEmployee(id);
@@ -100,7 +100,7 @@ public class InventoryController {
     @PutMapping("/{id}/alias")
     @Secured("ROLE_LOCAL_ADMIN")
     public InventoryFullOut updateAlias(@PathVariable long id,
-                                         @RequestBody @Valid InventoryChangeAliasCommand command) {
+                                        @RequestBody @Valid InventoryChangeAliasCommand command) {
         InventoryEntity updatedInventory = inventorySaver.changeField(id, command);
         return inventoryMapper.toFullDto(updatedInventory);
     }
@@ -118,6 +118,21 @@ public class InventoryController {
     public InventoryFullOut updateClass(@PathVariable long id,
                                         @RequestBody @Valid InventoryChangeClassCommand command) {
         InventoryEntity updatedInventory = inventorySaver.changeField(id, command);
+        return inventoryMapper.toFullDto(updatedInventory);
+    }
+
+    @PutMapping("/{id}/office")
+    @Secured("ROLE_LOCAL_ADMIN")
+    public InventoryFullOut updateOffice(@PathVariable long id,
+                                         @RequestBody @Valid InventoryChangeOfficeCommand command) {
+        InventoryEntity updatedInventory = inventorySaver.changeField(id, command);
+        return inventoryMapper.toFullDto(updatedInventory);
+    }
+
+    @DeleteMapping("/{id}/office")
+    @Secured("ROLE_LOCAL_ADMIN")
+    public InventoryFullOut updateOffice(@PathVariable long id) {
+        InventoryEntity updatedInventory = inventorySaver.changeField(id, new InventoryResetOfficeCommand());
         return inventoryMapper.toFullDto(updatedInventory);
     }
 
