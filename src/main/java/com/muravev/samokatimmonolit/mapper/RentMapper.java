@@ -6,7 +6,8 @@ import org.mapstruct.Mapper;
 
 @Mapper(uses = {
         InventoryMapper.class,
-        TariffMapper.class
+        TariffMapper.class,
+        ChequeMapper.class
 })
 public interface RentMapper {
     RentOut toDto(RentEntity entity);

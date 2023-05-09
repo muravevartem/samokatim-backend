@@ -37,6 +37,14 @@ public class RentEntity {
     @JoinColumn(name = "tariff_id", nullable = false)
     private OrganizationTariffEntity tariff;
 
+    @OneToOne(mappedBy = "rent",cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private ChequeEntity cheque;
+
+    public void setCheque(ChequeEntity cheque) {
+        this.cheque = cheque;
+        cheque.setRent(this);
+    }
 
     @Override
     public boolean equals(Object o) {

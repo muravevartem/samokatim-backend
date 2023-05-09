@@ -12,6 +12,7 @@ import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.repo.RentRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
+import com.muravev.samokatimmonolit.service.PaymentService;
 import com.muravev.samokatimmonolit.service.RentSaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class RentSaverImpl implements RentSaver {
 
     private final SecurityService securityService;
     private final ApplicationEventPublisher eventPublisher;
+    private final PaymentService paymentService;
 
 
     @Override
@@ -69,6 +71,7 @@ public class RentSaverImpl implements RentSaver {
         InventoryEntity inventory = rent.getInventory();
         inventory.setStatus(InventoryStatus.PENDING);
         eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.PENDING));
+        paymentService.pay(rent);
         return rent;
     }
 }
