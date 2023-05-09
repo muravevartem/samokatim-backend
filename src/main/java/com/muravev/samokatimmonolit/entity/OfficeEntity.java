@@ -53,14 +53,7 @@ public class OfficeEntity extends AuditEntity {
     private List<OfficeScheduleEmbeddable> schedules = new ArrayList<>();
 
     public boolean isClosed() {
-        DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
-        OffsetTime now = OffsetTime.now();
-        return schedules.stream()
-                .filter(schedule -> currentDay.equals(schedule.getDay()))
-                .filter(schedule -> now.isAfter(schedule.getStart()))
-                .filter(schedule -> now.isBefore(schedule.getEnd()))
-                .findFirst()
-                .isEmpty();
+        return false;
     }
 
 

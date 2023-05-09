@@ -1,6 +1,7 @@
 package com.muravev.samokatimmonolit.mapper;
 
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
+import com.muravev.samokatimmonolit.model.out.InventoryCompactOut;
 import com.muravev.samokatimmonolit.model.out.InventoryFullOut;
 import org.mapstruct.Mapper;
 
@@ -13,4 +14,6 @@ import org.mapstruct.Mapper;
 public interface InventoryMapper {
 
     InventoryFullOut toFullDto(InventoryEntity entity);
+
+    InventoryCompactOut toCompactDto(InventoryEntity entity);
 }

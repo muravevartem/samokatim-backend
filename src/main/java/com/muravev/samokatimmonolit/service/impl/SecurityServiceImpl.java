@@ -29,7 +29,7 @@ public class SecurityServiceImpl implements SecurityService {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         if (authentication == null)
-            throw new ApiException(StatusCode.UNAUTHORIZED);
+            return Optional.empty();
 
         String email = authentication.getPrincipal().toString();
         return userRepo.findByEmail(email.toLowerCase());

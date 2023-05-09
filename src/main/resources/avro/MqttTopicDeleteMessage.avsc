@@ -1,0 +1,15 @@
+{
+  "namespace": "com.muravev.samokatimmessage",
+  "type": "record",
+  "name": "MqttTopicDeleteMessage",
+  "fields": [
+    {
+      "name": "organizationId",
+      "type": "long"
+    },
+    {
+      "name": "topicName",
+      "type": "string"
+    }
+  ]
+}

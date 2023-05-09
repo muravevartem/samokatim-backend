@@ -4,15 +4,19 @@ package com.muravev.samokatimmonolit.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
+import org.jetbrains.annotations.NotNull;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "inventory_monitoring")
 @Getter
 @Setter
-public class InventoryMonitoringEntity extends AuditEntity {
+@Accessors(chain = true)
+public class InventoryMonitoringEntity extends AuditEntity implements Comparable<InventoryMonitoringEntity> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -22,12 +26,23 @@ public class InventoryMonitoringEntity extends AuditEntity {
     @JoinColumn(name = "inventory_id")
     private InventoryEntity inventory;
 
-    @Column(nullable = false)
-    private double lat;
+    private Double lat;
 
-    @Column(nullable = false)
-    private double lng;
+    private Double lng;
 
+    private Double speed;
+
+    private Integer satellites;
+
+    private Double altitude;
+
+    private ZonedDateTime originalTimestamp;
+
+
+    @Override
+    public int compareTo(@NotNull InventoryMonitoringEntity o) {
+        return getCreatedAt().compareTo(o.getCreatedAt());
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -41,4 +56,5 @@ public class InventoryMonitoringEntity extends AuditEntity {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }

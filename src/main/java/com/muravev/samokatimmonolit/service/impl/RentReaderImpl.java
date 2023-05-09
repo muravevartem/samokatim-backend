@@ -1,10 +1,12 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.InventoryMonitoringEntity;
 import com.muravev.samokatimmonolit.entity.RentEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.model.in.MapViewIn;
+import com.muravev.samokatimmonolit.repo.InventoryMonitoringRepo;
 import com.muravev.samokatimmonolit.repo.RentRepo;
 import com.muravev.samokatimmonolit.service.RentReader;
 import com.muravev.samokatimmonolit.service.SecurityService;
@@ -15,13 +17,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RentReaderImpl implements RentReader {
     private final RentRepo rentRepo;
+    private final InventoryMonitoringRepo monitoringRepo;
     private final SecurityService securityService;
 
 
@@ -62,6 +69,21 @@ public class RentReaderImpl implements RentReader {
         RentEntity rent = rentRepo.findByIdAndClient(id, currentClient)
                 .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
         return rent;
+    }
+
+    @Override
+    public SortedSet<InventoryMonitoringEntity> getTrack(long id) {
+        ClientEntity currentClient = securityService.getCurrentClient();
+        RentEntity rent = rentRepo.findByIdAndClient(id, currentClient)
+                .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
+        List<InventoryMonitoringEntity> track = monitoringRepo.findAllByInventoryAndTime(
+                rent.getInventory(),
+                rent.getStartTime(),
+                rent.getEndTime() == null
+                        ? ZonedDateTime.now()
+                        : rent.getEndTime()
+        );
+        return new TreeSet<>(track);
     }
 
 }

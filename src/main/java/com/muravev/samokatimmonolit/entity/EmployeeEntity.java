@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.Hibernate;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("EMPLOYEE")
@@ -26,5 +28,18 @@ public class EmployeeEntity extends UserEntity {
             this.organization.getEmployees().add(this);
         }
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        EmployeeEntity that = (EmployeeEntity) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

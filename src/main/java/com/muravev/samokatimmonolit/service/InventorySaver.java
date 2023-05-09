@@ -1,5 +1,6 @@
 package com.muravev.samokatimmonolit.service;
 
+import com.muravev.samokatimmessage.GeoPointReceivedMessage;
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import com.muravev.samokatimmonolit.model.in.command.inventory.*;
 
@@ -18,4 +19,6 @@ public interface InventorySaver {
     InventoryEntity changeField(long id, InventoryDeleteTariffCommand command);
 
     void delete(long id);
+
+    void savePoint(GeoPointReceivedMessage message);
 }

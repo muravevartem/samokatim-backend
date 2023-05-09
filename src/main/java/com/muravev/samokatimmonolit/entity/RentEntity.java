@@ -7,7 +7,10 @@ import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity
 @Table(name = "rent")
@@ -36,6 +39,14 @@ public class RentEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tariff_id", nullable = false)
     private OrganizationTariffEntity tariff;
+
+    @ManyToMany
+    @JoinTable(
+            name = "rent_track",
+            joinColumns = @JoinColumn(name = "rent_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "record_id", nullable = false)
+    )
+    private SortedSet<InventoryMonitoringEntity> track = new TreeSet<>();
 
     @OneToOne(mappedBy = "rent",cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn

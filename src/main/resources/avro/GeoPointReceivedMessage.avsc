@@ -4,7 +4,31 @@
   "name": "GeoPointReceivedMessage",
   "fields": [
     {
-      "name": "id",
+      "name": "inventoryId",
+      "type": "long"
+    },
+    {
+      "name": "satellites",
+      "type": "int"
+    },
+    {
+      "name": "lat",
+      "type": ["null", "double"]
+    },
+    {
+      "name": "lng",
+      "type": ["null", "double"]
+    },
+    {
+      "name": "altitude",
+      "type": ["null", "double"]
+    },
+    {
+      "name": "speed",
+      "type": ["null", "double"]
+    },
+    {
+      "name": "timestamp",
       "type": "long"
     }
   ]

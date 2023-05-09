@@ -1,9 +1,7 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
-import com.muravev.samokatimmonolit.entity.InventoryEntity;
-import com.muravev.samokatimmonolit.entity.OrganizationEntity;
-import com.muravev.samokatimmonolit.entity.OrganizationTariffEntity;
+import com.muravev.samokatimmessage.GeoPointReceivedMessage;
+import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
@@ -21,6 +19,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -121,5 +124,26 @@ public class InventorySaverImpl implements InventorySaver {
     @Transactional
     public void delete(long id) {
         inventoryRepo.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void savePoint(GeoPointReceivedMessage message) {
+        Long inventoryId = message.getInventoryId();
+        log.info("New geo point for inventory {}", inventoryId);
+        InventoryEntity inventory = inventoryRepo.findById(inventoryId)
+                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+        List<InventoryMonitoringEntity> monitoringRecord = inventory.getMonitoringRecord();
+        ZonedDateTime timestamp = ZonedDateTime.ofInstant(Instant.ofEpochSecond(message.getTimestamp()), ZoneId.of("UTC"));
+        InventoryMonitoringEntity record = new InventoryMonitoringEntity()
+                .setInventory(inventory)
+                .setLat(message.getLat())
+                .setLng(message.getLng())
+                .setSatellites(message.getSatellites())
+                .setAltitude(message.getAltitude())
+                .setSpeed(message.getSpeed())
+                .setOriginalTimestamp(timestamp);
+
+        monitoringRecord.add(record);
     }
 }

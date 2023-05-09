@@ -21,6 +21,10 @@ spring:
     properties:
       schema.registry.url: 'http://1349291-cu57808.tw1.ru:8081'
       specific.avro.reader: true
+  cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: false
 
 management:
   endpoint:
