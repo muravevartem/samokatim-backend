@@ -15,12 +15,14 @@ import com.muravev.samokatimmonolit.service.RentSaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import static java.util.function.Predicate.not;
@@ -87,6 +89,9 @@ public class RentSaverImpl implements RentSaver {
                         inventory,
                         rent.getStartTime(),
                         rent.getEndTime());
-        rent.setTrack(new TreeSet<>(track));
+        TreeSet<InventoryMonitoringEntity> filteredTrack = new TreeSet<>(track.stream()
+                .filter(x -> ObjectUtils.notEqual(x.getSatellites(), 0))
+                .toList());
+        rent.setTrack(filteredTrack);
     }
 }
