@@ -52,6 +52,10 @@ public class OrganizationEntity extends AuditEntity {
     @Where(clause = "deleted_at is null")
     private Set<OrganizationTariffEntity> tariffs = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "logo_id")
+    private FileEntity logo;
+
 
     @Override
     public boolean equals(Object o) {

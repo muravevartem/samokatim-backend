@@ -36,6 +36,12 @@ integration:
   dadata:
     base-url: 'https://suggestions.dadata.ru'
     token: '85e144d751ad4c1df93f49cf09535c23110e34c0'
+  ftp:
+    host: '1349291-cu57808.tw1.ru'
+    port: 21
+    username: 'ftpuser'
+    password: '191274'
+
 
 auth:
   secret: 'kwjqjifhijdwsghijkosdfjgoksdfjihjdfoihjdfo5345ihjdfijhiodfjhoikfdjhkojdfkohjfdkjhkofdjhkohdfgikhjokdfjhikfdjihjo'

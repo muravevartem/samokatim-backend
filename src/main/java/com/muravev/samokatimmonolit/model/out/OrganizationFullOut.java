@@ -13,6 +13,7 @@ public record OrganizationFullOut(
         String kpp,
         String email,
         String tel,
+        FileOut logo,
         OrganizationStatus status,
         Set<TariffOut> tariffs,
         ZonedDateTime createdAt

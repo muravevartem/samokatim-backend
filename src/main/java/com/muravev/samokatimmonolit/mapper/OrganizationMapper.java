@@ -5,8 +5,10 @@ import com.muravev.samokatimmonolit.model.out.OrganizationCompactOut;
 import com.muravev.samokatimmonolit.model.out.OrganizationFullOut;
 import org.mapstruct.Mapper;
 
-@Mapper(
-        uses = TariffMapper.class
+@Mapper(uses = {
+                TariffMapper.class,
+                FileMapper.class
+        }
 )
 public interface OrganizationMapper {
     OrganizationFullOut toFullDto(OrganizationEntity entity);

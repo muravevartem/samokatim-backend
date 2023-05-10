@@ -2,6 +2,7 @@ package com.muravev.samokatimmonolit.controller;
 
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.mapper.OrganizationMapper;
+import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationChangeLogoCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationCreateCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.TariffAddCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.TariffDeleteCommand;
@@ -11,11 +12,9 @@ import com.muravev.samokatimmonolit.model.out.TariffOut;
 import com.muravev.samokatimmonolit.service.OrganizationReader;
 import com.muravev.samokatimmonolit.service.OrganizationSaver;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -52,6 +51,13 @@ public class OrganizationController {
         OrganizationEntity organization = organizationSaver.addTariff(command);
         return organizationMapper.toFullDto(organization);
     }
+
+    @PostMapping("/me/logo")
+    public OrganizationFullOut changeAvatar(@Valid @RequestBody OrganizationChangeLogoCommand command) {
+        OrganizationEntity organization = organizationSaver.changeLogo(command);
+        return organizationMapper.toFullDto(organization);
+    }
+
 
     @DeleteMapping("/me/tariffs/{id}")
     public OrganizationFullOut OrganizationFullOut(@PathVariable long id) {

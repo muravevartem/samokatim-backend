@@ -1,15 +1,18 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.FileEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationTariffEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataOrganizationService;
 import com.muravev.samokatimmonolit.model.OrganizationStatus;
+import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationChangeLogoCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationCreateCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.TariffAddCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.TariffDeleteCommand;
+import com.muravev.samokatimmonolit.repo.FileRepo;
 import com.muravev.samokatimmonolit.repo.OrganizationRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
 import com.muravev.samokatimmonolit.service.EmployeeSaver;
@@ -29,6 +32,8 @@ import java.util.Set;
 public class OrganizationSaverImpl implements OrganizationSaver {
     private final TariffRepo tariffRepo;
     private final OrganizationRepo organizationRepo;
+    private final FileRepo fileRepo;
+
     private final EmployeeSaver employeeSaver;
     private final DadataOrganizationService dadataOrganizationService;
     private final SecurityService securityService;
@@ -81,5 +86,15 @@ public class OrganizationSaverImpl implements OrganizationSaver {
                 .orElseThrow(() -> new ApiException(StatusCode.TARIFF_NOT_FOUND));
         tariff.setDeletedAt(ZonedDateTime.now());
         return tariff.getOrganization();
+    }
+
+    @Override
+    @Transactional
+    public OrganizationEntity changeLogo(OrganizationChangeLogoCommand command) {
+        EmployeeEntity employee = securityService.getCurrentEmployee();
+        OrganizationEntity organization = employee.getOrganization();
+        FileEntity file = fileRepo.getReferenceById(command.fileId());
+        organization.setLogo(file);
+        return organization;
     }
 }
