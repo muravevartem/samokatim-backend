@@ -18,10 +18,11 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
-public abstract class FileServiceImpl implements FileService {
+public class FileServiceImpl implements FileService {
     private static final String PATH_FORMAT = "/files/%s";
 
     private final FileRepo fileRepo;
+    private final FTPClient ftpClient;
 
 
     @Override
@@ -32,7 +33,7 @@ public abstract class FileServiceImpl implements FileService {
             log.info("File uploading {}", fileId);
             String path = PATH_FORMAT.formatted(fileId);
             InputStream inputStream = file.getInputStream();
-            boolean b = getFTPClient().storeFile(path, inputStream);
+            boolean b = ftpClient.storeFile(path, inputStream);
             if (!b)
                 throw new ApiException(StatusCode.FILE_UPLOAD_WITH_ERROR);
         } catch (IOException e) {
@@ -61,12 +62,10 @@ public abstract class FileServiceImpl implements FileService {
     public byte[] downloadFile(UUID fileId) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            getFTPClient().retrieveFile(PATH_FORMAT.formatted(fileId), outputStream);
+            ftpClient.retrieveFile(PATH_FORMAT.formatted(fileId), outputStream);
         } catch (IOException e) {
             throw new ApiException(StatusCode.FILE_UPLOAD_WITH_ERROR);
         }
         return outputStream.toByteArray();
     }
-
-    protected abstract FTPClient getFTPClient();
 }

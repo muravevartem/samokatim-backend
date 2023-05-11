@@ -28,6 +28,7 @@ public class FTPConfiguration {
     private String password;
 
 
+    @Bean
     @SneakyThrows
     FTPClient ftpClient() {
         FTPClient ftpClient = new FTPClient();
@@ -35,15 +36,5 @@ public class FTPConfiguration {
         ftpClient.login(username, password);
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         return ftpClient;
-    }
-
-    @Bean
-    FileService fileService(FileRepo fileRepo) {
-        return new FileServiceImpl(fileRepo) {
-            @Override
-            protected FTPClient getFTPClient() {
-                return ftpClient();
-            }
-        };
     }
 }
