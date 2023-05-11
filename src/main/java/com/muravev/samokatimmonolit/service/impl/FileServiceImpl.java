@@ -40,11 +40,11 @@ public class FileServiceImpl implements FileService {
             boolean b = ftpClient.storeFile(path, inputStream);
             if (!b)
                 throw new ApiException(StatusCode.FILE_UPLOAD_WITH_ERROR);
-            ftpClient.disconnect();
         } catch (IOException e) {
             log.error("Error uploading file", e);
             throw new ApiException(StatusCode.FILE_UPLOAD_WITH_ERROR);
         }
+        ftpClientFactory.close(ftpClient);
 
         FileEntity fileEntity = new FileEntity()
                 .setNew(true)
@@ -69,10 +69,11 @@ public class FileServiceImpl implements FileService {
         FTPClient ftpClient = ftpClientFactory.getFTPClient();
         try {
             ftpClient.retrieveFile(PATH_FORMAT.formatted(fileId), outputStream);
-            ftpClient.disconnect();
         } catch (IOException e) {
             throw new ApiException(StatusCode.FILE_UPLOAD_WITH_ERROR);
         }
-        return outputStream.toByteArray();
+        byte[] byteArray = outputStream.toByteArray();
+        ftpClientFactory.close(ftpClient);
+        return byteArray;
     }
 }
