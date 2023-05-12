@@ -37,7 +37,7 @@ public class UserInviterImpl implements UserInviter {
     }
 
     private String randomInviteCode() {
-        return RandomStringUtils.randomNumeric(8);
+        return RandomStringUtils.randomNumeric(6);
     }
 
     @Override
