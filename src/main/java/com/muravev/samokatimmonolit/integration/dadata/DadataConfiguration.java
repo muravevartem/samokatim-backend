@@ -1,4 +1,4 @@
-package com.muravev.samokatimmonolit.config;
+package com.muravev.samokatimmonolit.integration.dadata;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;

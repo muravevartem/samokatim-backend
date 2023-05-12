@@ -2,12 +2,16 @@ package com.muravev.samokatimmonolit.controller;
 
 import com.muravev.samokatimmonolit.entity.InventoryMonitoringEntity;
 import com.muravev.samokatimmonolit.entity.RentEntity;
+import com.muravev.samokatimmonolit.integration.yookassa.model.response.Payment;
+import com.muravev.samokatimmonolit.integration.yookassa.service.YooKassaPaymentService;
 import com.muravev.samokatimmonolit.mapper.InventoryMonitoringRecordMapper;
 import com.muravev.samokatimmonolit.mapper.RentMapper;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
 import com.muravev.samokatimmonolit.model.out.GeoPositionOut;
+import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 import com.muravev.samokatimmonolit.model.out.RentCompactOut;
 import com.muravev.samokatimmonolit.model.out.RentOut;
+import com.muravev.samokatimmonolit.service.PaymentService;
 import com.muravev.samokatimmonolit.service.RentReader;
 import com.muravev.samokatimmonolit.service.RentSaver;
 import jakarta.validation.Valid;
@@ -16,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -26,6 +31,7 @@ public class RentController {
     private final RentSaver rentSaver;
     private final RentReader rentReader;
     private final RentMapper rentMapper;
+    private final YooKassaPaymentService paymentService;
     private final InventoryMonitoringRecordMapper monitoringRecordMapper;
 
     @GetMapping(params = {"my", "active"})
@@ -64,8 +70,8 @@ public class RentController {
     }
 
     @PutMapping("/{id}/complete")
-    public RentOut end(@PathVariable long id) {
-        RentEntity rent = rentSaver.end(id);
-        return rentMapper.toDto(rent);
+    public PaymentOptionsOut end(@PathVariable long id) {
+        return rentSaver.end(id);
     }
+
 }

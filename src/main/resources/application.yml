@@ -13,6 +13,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
     consumer:
       group-id: 'samokatim-service'
       auto-offset-reset: earliest
@@ -41,6 +42,10 @@ integration:
     port: 21
     username: 'ftpuser'
     password: '191274'
+  yookassa:
+    username: '317492'
+    secret-key: 'test_hEyGZkw2Zgm4rfFGdgVSdkyRa4f5MSQzbNjfwhUUx6c'
+
 
 
 auth:

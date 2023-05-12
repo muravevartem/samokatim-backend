@@ -1,7 +1,8 @@
 package com.muravev.samokatimmonolit.service;
 
 import com.muravev.samokatimmonolit.entity.RentEntity;
+import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 
 public interface PaymentService {
-    void pay(RentEntity rent);
+    PaymentOptionsOut pay(RentEntity rent);
 }

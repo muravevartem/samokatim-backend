@@ -1,15 +1,16 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.UserInviteEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
+import com.muravev.samokatimmonolit.kafka.producer.ClientEmailProducer;
 import com.muravev.samokatimmonolit.model.in.command.client.*;
 import com.muravev.samokatimmonolit.repo.ClientRepo;
 import com.muravev.samokatimmonolit.repo.UserRepo;
 import com.muravev.samokatimmonolit.service.ClientSaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import com.muravev.samokatimmonolit.service.UserInviter;
-import com.muravev.samokatimmonolit.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class ClientSaverImpl implements ClientSaver {
     private final UserRepo userRepo;
     private final UserInviter userInviter;
     private final SecurityService securityService;
-
+    private final ClientEmailProducer emailProducer;
 
     @Override
     @Transactional
@@ -36,7 +37,8 @@ public class ClientSaverImpl implements ClientSaver {
         client.setEmail(command.email());
 
         ClientEntity savedClient = clientRepo.save(client);
-        userInviter.invite(savedClient, Duration.ofMinutes(15L));
+        UserInviteEntity invite = userInviter.invite(savedClient, Duration.ofMinutes(15L));
+        emailProducer.sendInvite(invite);
     }
 
     @Override

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,15 +26,14 @@ public class UserInviterImpl implements UserInviter {
     private final UserInviteRepo inviteRepo;
     private final PasswordEncoder passwordEncoder;
 
-
     @Override
     @Transactional
-    public void invite(UserEntity user, Duration duration) {
+    public UserInviteEntity invite(UserEntity user, Duration duration) {
         UserInviteEntity userInvite = new UserInviteEntity()
                 .setUser(user)
                 .setCode(randomInviteCode())
                 .setExpirationTime(ZonedDateTime.now().plus(duration));
-        inviteRepo.save(userInvite);
+        return inviteRepo.save(userInvite);
     }
 
     private String randomInviteCode() {

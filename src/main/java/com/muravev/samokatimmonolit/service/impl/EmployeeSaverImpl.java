@@ -3,8 +3,10 @@ package com.muravev.samokatimmonolit.service.impl;
 import com.muravev.samokatimmonolit.entity.EmployeeEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.UserInviteEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
+import com.muravev.samokatimmonolit.kafka.producer.EmployeeEmailProducer;
 import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeInviteCommand;
 import com.muravev.samokatimmonolit.repo.EmployeeRepo;
 import com.muravev.samokatimmonolit.repo.UserRepo;
@@ -31,6 +33,8 @@ public class EmployeeSaverImpl implements EmployeeSaver {
     private final SecurityService securityService;
     private final UserInviter userInviter;
 
+    private final EmployeeEmailProducer emailProducer;
+
 
     @Override
     @Transactional
@@ -54,7 +58,8 @@ public class EmployeeSaverImpl implements EmployeeSaver {
                 .setEmail(email.toLowerCase())
                 .setNotConfirmed(true);
         EmployeeEntity savedEmployee = userRepo.save(employee);
-        userInviter.invite(savedEmployee, Duration.ofMinutes(15));
+        UserInviteEntity invite = userInviter.invite(savedEmployee, Duration.ofMinutes(15));
+        emailProducer.sendInvite(invite);
 
         log.info("Created employee {}", employee.getEmail());
         return employee;

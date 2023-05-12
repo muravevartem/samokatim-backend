@@ -1,8 +1,12 @@
 package com.muravev.samokatimmonolit.service.impl;
 
+import com.muravev.samokatimmonolit.entity.EmployeeEntity;
 import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.UserInviteEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
+import com.muravev.samokatimmonolit.kafka.producer.ClientEmailProducer;
+import com.muravev.samokatimmonolit.kafka.producer.EmployeeEmailProducer;
 import com.muravev.samokatimmonolit.model.in.command.user.UserResetPasswordCommand;
 import com.muravev.samokatimmonolit.repo.UserRepo;
 import com.muravev.samokatimmonolit.service.UserInviter;
@@ -22,12 +26,20 @@ public class UserWriterImpl implements UserWriter {
 
     private final UserInviter userInviter;
 
+    private final ClientEmailProducer clientEmailProducer;
+    private final EmployeeEmailProducer employeeEmailProducer;
 
     @Override
     @Transactional
     public void resetPassword(UserResetPasswordCommand command) {
         UserEntity user = userRepo.findByEmail(command.email().toLowerCase())
                 .orElseThrow(() -> new ApiException(StatusCode.USER_NOT_FOUND));
-        userInviter.invite(user, Duration.ofMinutes(5));
+        UserInviteEntity invite = userInviter.invite(user, Duration.ofMinutes(5));
+
+        if (user instanceof EmployeeEntity) {
+            employeeEmailProducer.sendInvite(invite);
+        } else {
+            clientEmailProducer.sendInvite(invite);
+        }
     }
 }

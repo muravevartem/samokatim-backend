@@ -6,6 +6,7 @@ import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
+import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 import com.muravev.samokatimmonolit.repo.InventoryMonitoringRepo;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.repo.RentRepo;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.TreeSet;
 
 import static java.util.function.Predicate.not;
@@ -69,7 +69,7 @@ public class RentSaverImpl implements RentSaver {
 
     @Override
     @Transactional
-    public RentEntity end(long id) {
+    public PaymentOptionsOut end(long id) {
         ClientEntity currentClient = securityService.getCurrentClient();
         RentEntity rent = rentRepo.findByIdAndClient(id, currentClient)
                 .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
@@ -78,8 +78,7 @@ public class RentSaverImpl implements RentSaver {
         inventory.setStatus(InventoryStatus.PENDING);
         fixationTrack(rent);
         eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.PENDING));
-        paymentService.pay(rent);
-        return rent;
+        return paymentService.pay(rent);
     }
 
     private void fixationTrack(RentEntity rent) {
