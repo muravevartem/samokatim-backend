@@ -97,7 +97,7 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
 
     @Override
     @Retryable(retryFor = InvalidStatusException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 10000))
-    public Payment cancel(String paymentId) {
+    public void cancel(String paymentId) {
         Payment existedPayment = getPaymentById(paymentId);
         if (existedPayment.status() != PaymentStatus.WAITING_FOR_CAPTURE)
             throw new InvalidStatusException();
@@ -105,12 +105,11 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
         HttpHeaders httpHeaders = new HttpHeaders();
         int hash = Objects.hash(paymentId, Instant.now().toEpochMilli());
         httpHeaders.set("Idempotence-Key", String.valueOf(hash));
-        Payment payment = client.postForObject(
+        client.postForObject(
                 "/v3/payments/%s/cancel".formatted(paymentId),
-                new HttpEntity<>(new Object(), httpHeaders),
-                Payment.class
+                new HttpEntity<>(Map.of(), httpHeaders),
+                Void.class
         );
-        return payment;
     }
 
     @Override

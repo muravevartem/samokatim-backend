@@ -238,8 +238,14 @@ public class PaymentServiceImpl implements PaymentService {
     private void handleRefundDeposit(DepositEntity deposit) {
         Refund refund = providerPayment.getRefundById(deposit.getRefundBankId());
         switch (refund.status()) {
-            case CANCELED -> deposit.setStatus(DespositStatus.HOLD);
-            case SUCCEEDED -> deposit.setStatus(DespositStatus.REFUNDED);
+            case CANCELED -> {
+                deposit.setStatus(DespositStatus.HOLD);
+            }
+            case SUCCEEDED -> {
+                deposit.setStatus(DespositStatus.REFUNDED);
+                RentEntity rent = deposit.getRent();
+                rent.setStatus(RentStatus.COMPLETED);
+            }
             case PENDING -> {
             }
         }
@@ -251,7 +257,7 @@ public class PaymentServiceImpl implements PaymentService {
         final RentEntity rent = payment.getRent();
         switch (existedPayment.status()) {
             case CANCELED -> {
-                rent.setStatus(RentStatus.CANCELED);
+                rent.setStatus(RentStatus.UNPAID);
                 payment.setStatus(PaymentStatus.CANCELED);
             }
             case SUCCEEDED -> {

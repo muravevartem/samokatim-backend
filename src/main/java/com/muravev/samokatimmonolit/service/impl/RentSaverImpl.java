@@ -59,7 +59,7 @@ public class RentSaverImpl implements RentSaver {
         RentEntity rent = new RentEntity()
                 .setClient(currentClient)
                 .setInventory(inventory)
-                .setStatus(RentStatus.ACTIVE)
+                .setStatus(RentStatus.STARTING)
                 .setTariff(tariff);
 
         inventorySaver.changeStatus(inventory, InventoryStatus.IN_WORK);

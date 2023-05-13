@@ -4,5 +4,6 @@ public enum RentStatus {
     STARTING,
     ACTIVE,
     CANCELED,
-    COMPLETED
+    COMPLETED,
+    UNPAID,
 }

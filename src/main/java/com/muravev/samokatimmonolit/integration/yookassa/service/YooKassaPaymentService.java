@@ -19,7 +19,7 @@ public interface YooKassaPaymentService {
 
     Payment debit(String paymentId);
 
-    Payment cancel(String paymentId);
+    void cancel(String paymentId);
 
     Payment getPaymentById(String id);
 

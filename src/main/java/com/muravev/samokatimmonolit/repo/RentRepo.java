@@ -26,7 +26,7 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
                 AND
                 rent.inventory.activeRent.client = :client
                 AND
-                rent.endTime IS NULL
+                (rent.status <> 'COMPLETED' AND rent.status <> 'CANCELED')
             ORDER BY rent.inventory.id DESC
             """)
     List<RentEntity> findAllByView(@Param("latNE") double latNE,
@@ -45,7 +45,7 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
 
     @Query("""
             SELECT rent FROM RentEntity rent
-            WHERE rent.client = :client AND rent.endTime IS NULL
+            WHERE rent.client = :client AND rent.status = 'ACTIVE'
             
             """)
     List<RentEntity> findAllActiveByClient(ClientEntity client);
