@@ -4,7 +4,7 @@ public enum DespositStatus {
     CREATING,
     PENDING,
     HOLD,
-    RETURNING,
-    RETURNED,
+    REFUNDING,
+    REFUNDED,
     CANCELED
 }

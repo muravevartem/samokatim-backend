@@ -28,7 +28,11 @@ public class DepositEntity extends AuditEntity {
 
     private BigDecimal price;
 
+    private String url;
+
     private String bankId;
+
+    private String refundBankId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

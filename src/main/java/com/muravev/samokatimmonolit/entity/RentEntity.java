@@ -17,7 +17,7 @@ import java.util.TreeSet;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RentEntity {
+public class RentEntity extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -50,7 +50,7 @@ public class RentEntity {
     )
     private SortedSet<InventoryMonitoringEntity> track = new TreeSet<>();
 
-    @OneToOne(mappedBy = "rent",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "rent", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private PaymentEntity cheque;
 

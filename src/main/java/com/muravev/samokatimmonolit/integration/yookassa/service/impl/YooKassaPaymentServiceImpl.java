@@ -6,12 +6,10 @@ import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentConfirmati
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentCurrency;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentItem;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentStatus;
-import com.muravev.samokatimmonolit.integration.yookassa.model.request.PaymentConfirmationRequest;
-import com.muravev.samokatimmonolit.integration.yookassa.model.request.PaymentRequest;
-import com.muravev.samokatimmonolit.integration.yookassa.model.request.ReceiptCustomerRequest;
-import com.muravev.samokatimmonolit.integration.yookassa.model.request.ReceiptRequest;
+import com.muravev.samokatimmonolit.integration.yookassa.model.request.*;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.Payment;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.PaymentAmount;
+import com.muravev.samokatimmonolit.integration.yookassa.model.response.Refund;
 import com.muravev.samokatimmonolit.integration.yookassa.service.YooKassaPaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +61,7 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
                 .metadata(Map.of("order_id", orderId))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
-        int hash = Objects.hash(orderId, Instant.now().toEpochMilli());
+        int hash = Objects.hash(orderId, Instant.now().getEpochSecond());
         httpHeaders.set("Idempotence-Key", String.valueOf(hash));
         Payment payment = client.postForObject(
                 "/v3/payments",
@@ -120,6 +118,45 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
         return client.getForObject(
                 "/v3/payments/" + id,
                 Payment.class
+        );
+    }
+
+    @Override
+    public Refund refund(String orderId,
+                         String paymentId,
+                         BigDecimal price,
+                         String description,
+                         List<PaymentItem> items,
+                         UserEntity customer) {
+        RefundRequest refundRequest = RefundRequest.builder()
+                .paymentId(paymentId)
+                .amount(new PaymentAmount(price, PaymentCurrency.RUB))
+                .description(description)
+                .receipt(ReceiptRequest.builder()
+                        .customer(ReceiptCustomerRequest.builder()
+                                .email(customer.getEmail())
+                                .fullName("%s %s".formatted(customer.getLastName(), customer.getFirstName()))
+                                .build())
+                        .items(items)
+                        .build())
+                .build();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        int hash = Objects.hash(paymentId, Instant.now().toEpochMilli());
+        httpHeaders.set("Idempotence-Key", String.valueOf(hash));
+        Refund refund = client.postForObject(
+                "/v3/refunds",
+                new HttpEntity<>(refundRequest, httpHeaders),
+                Refund.class
+        );
+        log.info("Refund {}", refund.id());
+        return refund;
+    }
+
+    @Override
+    public Refund getRefundById(String id) {
+        return client.getForObject(
+                "/v3/refunds/" + id,
+                Refund.class
         );
     }
 }

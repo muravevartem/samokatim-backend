@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("CLIENT")
@@ -15,4 +17,5 @@ import java.util.List;
 public class ClientEntity extends UserEntity {
     @OneToMany(mappedBy = "client")
     private List<RentEntity> rents;
+
 }

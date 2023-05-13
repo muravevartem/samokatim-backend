@@ -1,7 +1,9 @@
 package com.muravev.samokatimmonolit.repo;
 
 import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.PaymentEntity;
 import com.muravev.samokatimmonolit.entity.RentEntity;
+import com.muravev.samokatimmonolit.model.RentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +49,10 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
             
             """)
     List<RentEntity> findAllActiveByClient(ClientEntity client);
+
+    @Query("""
+            SELECT rent FROM RentEntity rent
+            WHERE rent.createdAt < :cancelTime AND rent.status = 'STARTING'
+            """)
+    List<RentEntity> findAllStartingRents(ZonedDateTime cancelTime);
 }

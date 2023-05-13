@@ -7,6 +7,7 @@ import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentCurrency;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentItem;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.Payment;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.PaymentAmount;
+import com.muravev.samokatimmonolit.integration.yookassa.model.response.Refund;
 import com.muravev.samokatimmonolit.integration.yookassa.service.YooKassaPaymentService;
 import com.muravev.samokatimmonolit.model.DespositStatus;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
@@ -20,6 +21,7 @@ import com.muravev.samokatimmonolit.service.InventorySaver;
 import com.muravev.samokatimmonolit.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public PaymentOptionsOut pay(RentEntity rent) {
-        assert rent.getCheque() == null;
+        PaymentEntity cheque = rent.getCheque();
+        if (cheque != null) {
+            return new PaymentOptionsOut(rent.getId(), cheque.getUrl());
+        }
         OrganizationTariffEntity tariff = rent.getTariff();
         PaymentOptionsOut paymentOptionsOut = switch (tariff.getType()) {
             case MINUTE_BY_MINUTE -> payByMinuteByMinuteTariff(rent);
@@ -98,8 +103,9 @@ public class PaymentServiceImpl implements PaymentService {
                 rent.getClient()
         );
         savedPayment.setStatus(PaymentStatus.PENDING)
-                .setBankId(paymentResponse.id());
-        return new PaymentOptionsOut(rent.getId(), paymentResponse.confirmation().url());
+                .setBankId(paymentResponse.id())
+                .setUrl(paymentResponse.confirmation().url());
+        return new PaymentOptionsOut(rent.getId(), savedPayment.getUrl());
     }
 
     private PaymentOptionsOut payByLongTermTariff(RentEntity rent) {
@@ -135,8 +141,9 @@ public class PaymentServiceImpl implements PaymentService {
                 rent.getClient()
         );
         savedPayment.setStatus(PaymentStatus.PENDING)
-                .setBankId(paymentResponse.id());
-        return new PaymentOptionsOut(rent.getId(), paymentResponse.confirmation().url());
+                .setBankId(paymentResponse.id())
+                .setUrl(paymentResponse.confirmation().url());
+        return new PaymentOptionsOut(rent.getId(), savedPayment.getUrl());
     }
 
 
@@ -148,7 +155,7 @@ public class PaymentServiceImpl implements PaymentService {
         OrganizationTariffEntity tariff = rent.getTariff();
         BigDecimal depositPrice = tariff.getDeposit() == null
                 ? BigDecimal.ONE
-                :  tariff.getDeposit();
+                : tariff.getDeposit();
 
         DepositEntity deposit = new DepositEntity();
         deposit.setRent(rent)
@@ -156,39 +163,51 @@ public class PaymentServiceImpl implements PaymentService {
                 .setPrice(depositPrice);
         DepositEntity savedDeposit = depositRepo.save(deposit);
         String description = "Залог аренды #" + rent.getId();
-        try {
-            Payment payment = providerPayment.hold(
-                    rent.getId().toString(),
-                    depositPrice,
-                    description,
-                    List.of(
-                            PaymentItem.builder()
-                                    .amount(new PaymentAmount(depositPrice, PaymentCurrency.RUB))
-                                    .description(description)
-                                    .vatCode(1)
-                                    .quantity("1")
-                                    .build()
-                    ),
-                    RETURN_URL,
-                    rent.getClient()
-            );
-            savedDeposit.setStatus(DespositStatus.PENDING)
-                    .setBankId(payment.id());
-            return new PaymentOptionsOut(
-                    rent.getId(),
-                    payment.confirmation().url()
-            );
-        } catch (Exception e) {
-            throw new ApiException(StatusCode.DEPOSIT_CREATING_ERROR);
-        }
+        Payment payment = providerPayment.hold(
+                rent.getId().toString(),
+                depositPrice,
+                description,
+                List.of(
+                        PaymentItem.builder()
+                                .amount(new PaymentAmount(depositPrice, PaymentCurrency.RUB))
+                                .description(description)
+                                .vatCode(1)
+                                .quantity("1")
+                                .build()
+                ),
+                RETURN_URL,
+                rent.getClient()
+        );
+        savedDeposit.setStatus(DespositStatus.PENDING)
+                .setBankId(payment.id())
+                .setUrl(payment.confirmation().url());
+        return new PaymentOptionsOut(
+                rent.getId(),
+                savedDeposit.getUrl()
+        );
     }
 
-    @Scheduled(fixedDelay = 2000L)
+    @Scheduled(fixedDelay = 5000L)
     @Transactional
     public void handleDeposits() {
         List<DepositEntity> pendingDeposits = depositRepo.findAllByStatus(DespositStatus.PENDING);
         pendingDeposits.forEach(this::handleDeposit);
     }
+
+    @Scheduled(fixedDelay = 5000L)
+    @Transactional
+    public void handlePayments() {
+        List<PaymentEntity> pendingPayments = paymentRepository.findAllByStatusIsIn(List.of(PaymentStatus.PENDING, PaymentStatus.CONFIRMED));
+        pendingPayments.forEach(this::handlePayment);
+    }
+
+    @Scheduled(fixedDelay = 5000L)
+    @Transactional
+    public void handleRefundDeposits() {
+        List<DepositEntity> pendingDeposits = depositRepo.findAllByStatus(DespositStatus.REFUNDING);
+        pendingDeposits.forEach(this::handleRefundDeposit);
+    }
+
 
     private void handleDeposit(DepositEntity deposit) {
         Payment payment = providerPayment.getPaymentById(deposit.getBankId());
@@ -205,18 +224,27 @@ public class PaymentServiceImpl implements PaymentService {
                 deposit.setStatus(DespositStatus.HOLD);
             }
             case WAITING_FOR_CAPTURE -> {
-                providerPayment.debit(deposit.getBankId());
+                if (rent.getStatus() == RentStatus.STARTING) {
+                    providerPayment.debit(deposit.getBankId());
+                } else {
+                    providerPayment.cancel(deposit.getBankId());
+                }
             }
-            case PENDING -> {}
+            case PENDING -> {
+            }
         }
     }
 
-    @Scheduled(fixedDelay = 2000L)
-    @Transactional
-    public void handlePayments() {
-        List<PaymentEntity> pendingPayments = paymentRepository.findAllByStatus(PaymentStatus.PENDING);
-        pendingPayments.forEach(this::handlePayment);
+    private void handleRefundDeposit(DepositEntity deposit) {
+        Refund refund = providerPayment.getRefundById(deposit.getRefundBankId());
+        switch (refund.status()) {
+            case CANCELED -> deposit.setStatus(DespositStatus.HOLD);
+            case SUCCEEDED -> deposit.setStatus(DespositStatus.REFUNDED);
+            case PENDING -> {
+            }
+        }
     }
+
 
     private void handlePayment(PaymentEntity payment) {
         Payment existedPayment = providerPayment.getPaymentById(payment.getBankId());
@@ -225,18 +253,41 @@ public class PaymentServiceImpl implements PaymentService {
             case CANCELED -> {
                 rent.setStatus(RentStatus.CANCELED);
                 payment.setStatus(PaymentStatus.CANCELED);
-                inventorySaver.changeStatus(rent.getInventory(), InventoryStatus.PENDING);
             }
             case SUCCEEDED -> {
-                rent.setStatus(RentStatus.COMPLETED);
-                rent.setStartTime(ZonedDateTime.now());
                 payment.setStatus(PaymentStatus.COMPLETED);
+                DepositEntity deposit = rent.getDeposit();
+                if (deposit.getStatus() == DespositStatus.HOLD) {
+                    String description = "Возврат залога аренды #%s".formatted(rent.getId());
+                    Refund refund = providerPayment.refund(rent.getId().toString(),
+                            deposit.getBankId(),
+                            deposit.getPrice(),
+                            description,
+                            List.of(
+                                    PaymentItem.builder()
+                                            .amount(new PaymentAmount(deposit.getPrice(), PaymentCurrency.RUB))
+                                            .description(description)
+                                            .vatCode(1)
+                                            .quantity("1")
+                                            .build()
+                            ),
+                            Hibernate.unproxy(rent.getClient(), ClientEntity.class)
+                    );
+                    deposit.setRefundBankId(refund.id())
+                            .setStatus(DespositStatus.REFUNDING);
+                }
+
             }
             case WAITING_FOR_CAPTURE -> {
-                providerPayment.debit(payment.getBankId());
-                payment.setStatus(PaymentStatus.CONFIRMED);
+                if (rent.getStatus() == RentStatus.COMPLETED) {
+                    providerPayment.debit(payment.getBankId());
+                    payment.setStatus(PaymentStatus.CONFIRMED);
+                } else {
+                    providerPayment.cancel(payment.getBankId());
+                }
             }
-            case PENDING -> {}
+            case PENDING -> {
+            }
         }
     }
 }

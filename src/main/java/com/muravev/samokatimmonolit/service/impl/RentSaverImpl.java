@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,5 +93,17 @@ public class RentSaverImpl implements RentSaver {
                 .filter(x -> ObjectUtils.notEqual(x.getSatellites(), 0))
                 .toList());
         rent.setTrack(filteredTrack);
+    }
+
+    @Scheduled(fixedDelay = 30000L)
+    @Transactional
+    public void autoCancelStartingRent() {
+        List<RentEntity> rents = rentRepo.findAllStartingRents(ZonedDateTime.now().minusMinutes(5));
+        rents.forEach(this::cancelRent);
+    }
+
+    private void cancelRent(RentEntity rent) {
+        inventorySaver.changeStatus(rent.getInventory(), InventoryStatus.PENDING);
+        rent.setStatus(RentStatus.CANCELED);
     }
 }

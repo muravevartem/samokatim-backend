@@ -28,6 +28,8 @@ public class PaymentEntity extends AuditEntity {
 
     private BigDecimal price;
 
+    private String url;
+
     private String bankId;
 
     @Enumerated(EnumType.STRING)
