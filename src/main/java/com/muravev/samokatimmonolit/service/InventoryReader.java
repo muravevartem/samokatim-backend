@@ -2,6 +2,7 @@ package com.muravev.samokatimmonolit.service;
 
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import com.muravev.samokatimmonolit.event.AbstractInventoryEvent;
+import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.model.in.MapViewIn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

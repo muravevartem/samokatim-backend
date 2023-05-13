@@ -45,6 +45,7 @@ public class InventoryReaderImpl implements InventoryReader {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<InventoryEntity> findAllInViewAndRentedByMe(MapViewIn view) {
         ClientEntity currentClient = securityService.getCurrentClient();
 

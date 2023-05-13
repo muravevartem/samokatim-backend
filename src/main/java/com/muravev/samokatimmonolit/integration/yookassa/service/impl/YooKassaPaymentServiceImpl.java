@@ -1,9 +1,15 @@
 package com.muravev.samokatimmonolit.integration.yookassa.service.impl;
 
+import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.integration.yookassa.error.InvalidStatusException;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentConfirmationType;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentCurrency;
-import com.muravev.samokatimmonolit.integration.yookassa.model.request.CreatePaymentConfirmationRequest;
-import com.muravev.samokatimmonolit.integration.yookassa.model.request.CreatePaymentRequest;
+import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentItem;
+import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentStatus;
+import com.muravev.samokatimmonolit.integration.yookassa.model.request.PaymentConfirmationRequest;
+import com.muravev.samokatimmonolit.integration.yookassa.model.request.PaymentRequest;
+import com.muravev.samokatimmonolit.integration.yookassa.model.request.ReceiptCustomerRequest;
+import com.muravev.samokatimmonolit.integration.yookassa.model.request.ReceiptRequest;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.Payment;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.PaymentAmount;
 import com.muravev.samokatimmonolit.integration.yookassa.service.YooKassaPaymentService;
@@ -12,11 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -26,20 +37,34 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
     private RestTemplate client;
 
     @Override
-    public Payment createPayment(long rentId, BigDecimal price, String description) {
-        CreatePaymentRequest request = CreatePaymentRequest.builder()
+    public Payment hold(String orderId,
+                        BigDecimal price,
+                        String description,
+                        List<PaymentItem> items,
+                        String returnUrl,
+                        UserEntity customer) {
+        PaymentRequest request = PaymentRequest.builder()
                 .amount(new PaymentAmount(price, PaymentCurrency.RUB))
                 .confirmation(
-                        CreatePaymentConfirmationRequest.builder()
+                        PaymentConfirmationRequest.builder()
                                 .type(PaymentConfirmationType.REDIRECT)
-                                .returnUrl("http://localhost:3000")
+                                .returnUrl(returnUrl)
                                 .build()
                 )
+                .receipt(ReceiptRequest.builder()
+                        .customer(ReceiptCustomerRequest.builder()
+                                .email(customer.getEmail())
+                                .fullName("%s %s".formatted(customer.getLastName(), customer.getFirstName()))
+                                .build())
+                        .items(items)
+                        .build())
                 .capture(false)
                 .description(description)
+                .metadata(Map.of("order_id", orderId))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Idempotence-Key", String.valueOf(Instant.now().toEpochMilli()));
+        int hash = Objects.hash(orderId, Instant.now().toEpochMilli());
+        httpHeaders.set("Idempotence-Key", String.valueOf(hash));
         Payment payment = client.postForObject(
                 "/v3/payments",
                 new HttpEntity<>(request, httpHeaders),
@@ -47,7 +72,46 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
         );
         assert payment != null;
 
-        log.info("Created payment {}", payment.id());
+        log.info("Hold payment {}", payment.id());
+        return payment;
+    }
+
+    @Override
+    @Retryable(retryFor = InvalidStatusException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay =10000))
+    public Payment debit(String paymentId) {
+        Payment existedPayment = getPaymentById(paymentId);
+        if (existedPayment.status() != PaymentStatus.WAITING_FOR_CAPTURE)
+            throw new InvalidStatusException();
+
+        PaymentRequest paymentRequest = PaymentRequest.builder().build();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        int hash = Objects.hash(paymentId, Instant.now().toEpochMilli());
+        httpHeaders.set("Idempotence-Key", String.valueOf(hash));
+        Payment payment = client.postForObject(
+                "/v3/payments/%s/capture".formatted(paymentId),
+                new HttpEntity<>(paymentRequest, httpHeaders),
+                Payment.class
+        );
+        log.info("Debit payment {}", paymentId);
+        return payment;
+    }
+
+    @Override
+    @Retryable(retryFor = InvalidStatusException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 10000))
+    public Payment cancel(String paymentId) {
+        Payment existedPayment = getPaymentById(paymentId);
+        if (existedPayment.status() != PaymentStatus.WAITING_FOR_CAPTURE)
+            throw new InvalidStatusException();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        int hash = Objects.hash(paymentId, Instant.now().toEpochMilli());
+        httpHeaders.set("Idempotence-Key", String.valueOf(hash));
+        Payment payment = client.postForObject(
+                "/v3/payments/%s/cancel".formatted(paymentId),
+                new HttpEntity<>(new Object(), httpHeaders),
+                Payment.class
+        );
         return payment;
     }
 

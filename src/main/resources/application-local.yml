@@ -1,0 +1,3 @@
+integration:
+  yookassa:
+    return-url: 'http://localhost:3000'

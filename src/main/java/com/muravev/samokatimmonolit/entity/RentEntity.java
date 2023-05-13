@@ -1,5 +1,6 @@
 package com.muravev.samokatimmonolit.entity;
 
+import com.muravev.samokatimmonolit.model.RentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +8,6 @@ import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -23,7 +23,6 @@ public class RentEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private ZonedDateTime startTime;
 
     private ZonedDateTime endTime;
@@ -40,6 +39,9 @@ public class RentEntity {
     @JoinColumn(name = "tariff_id", nullable = false)
     private OrganizationTariffEntity tariff;
 
+    @Enumerated(EnumType.STRING)
+    private RentStatus status;
+
     @ManyToMany
     @JoinTable(
             name = "rent_track",
@@ -50,9 +52,13 @@ public class RentEntity {
 
     @OneToOne(mappedBy = "rent",cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    private ChequeEntity cheque;
+    private PaymentEntity cheque;
 
-    public void setCheque(ChequeEntity cheque) {
+    @OneToOne(mappedBy = "rent", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private DepositEntity deposit;
+
+    public void setCheque(PaymentEntity cheque) {
         this.cheque = cheque;
         cheque.setRent(this);
     }

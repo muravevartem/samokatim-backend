@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -128,6 +127,14 @@ public class InventorySaverImpl implements InventorySaver {
     public InventoryEntity changeField(long id, InventoryResetOfficeCommand command) {
         InventoryEntity inventory = getOneAsEmployee(id);
         inventory.setOffice(null);
+        return inventory;
+    }
+
+    @Override
+    @Transactional
+    public InventoryEntity changeStatus(InventoryEntity inventory, InventoryStatus status) {
+        inventory.setStatus(status);
+        eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.IN_WORK));
         return inventory;
     }
 

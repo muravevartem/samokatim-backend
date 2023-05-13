@@ -13,11 +13,6 @@ import java.math.BigDecimal;
 public class PaymentController {
     private final YooKassaPaymentService paymentService;
 
-    @PostMapping(params = "rent")
-    public Payment pay(@RequestParam long rentId) {
-        return paymentService.createPayment(rentId, BigDecimal.valueOf(123), "Тестовая оплата");
-    }
-
     @GetMapping("/{id}")
     public Payment get(@PathVariable String id) {
         return paymentService.getPaymentById(id);

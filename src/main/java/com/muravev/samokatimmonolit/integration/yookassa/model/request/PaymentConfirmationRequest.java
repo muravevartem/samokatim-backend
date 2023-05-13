@@ -5,7 +5,7 @@ import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentConfirmati
 import lombok.Builder;
 
 @Builder
-public record CreatePaymentConfirmationRequest(
+public record PaymentConfirmationRequest(
         PaymentConfirmationType type,
         @JsonProperty("return_url")
         String returnUrl

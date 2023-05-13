@@ -37,6 +37,8 @@ public enum StatusCode {
     FILE_UPLOAD_WITH_ERROR(HttpStatus.BAD_REQUEST, "Ошибка загрузки файла"),
     FILE_DOWNLOAD_WITH_ERROR(HttpStatus.BAD_REQUEST, "Ошибка загрузки файла"),
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "Файл не найден"),
+
+    DEPOSIT_CREATING_ERROR(HttpStatus.PROCESSING, "Ошибка резервации залога"),
     ;
 
     private final HttpStatus httpStatus;

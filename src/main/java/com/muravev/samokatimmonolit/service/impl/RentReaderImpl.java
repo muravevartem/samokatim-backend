@@ -71,6 +71,7 @@ public class RentReaderImpl implements RentReader {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RentEntity findMyById(long id) {
         ClientEntity currentClient = securityService.getCurrentClient();
         RentEntity rent = rentRepo.findByIdAndClient(id, currentClient)
@@ -79,6 +80,7 @@ public class RentReaderImpl implements RentReader {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SortedSet<InventoryMonitoringEntity> getTrack(long id) {
         ClientEntity currentClient = securityService.getCurrentClient();
         RentEntity rent = rentRepo.findByIdAndClient(id, currentClient)

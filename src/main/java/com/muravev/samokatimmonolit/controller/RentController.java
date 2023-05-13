@@ -31,7 +31,6 @@ public class RentController {
     private final RentSaver rentSaver;
     private final RentReader rentReader;
     private final RentMapper rentMapper;
-    private final YooKassaPaymentService paymentService;
     private final InventoryMonitoringRecordMapper monitoringRecordMapper;
 
     @GetMapping(params = {"my", "active"})
@@ -64,9 +63,8 @@ public class RentController {
 
 
     @PostMapping
-    public RentOut create(@RequestBody @Valid RentCreateCommand command) {
-        RentEntity rent = rentSaver.start(command);
-        return rentMapper.toDto(rent);
+    public PaymentOptionsOut create(@RequestBody @Valid RentCreateCommand command) {
+        return rentSaver.start(command);
     }
 
     @PutMapping("/{id}/complete")

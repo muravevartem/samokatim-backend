@@ -1,5 +1,6 @@
 package com.muravev.samokatimmonolit.entity;
 
+import com.muravev.samokatimmonolit.model.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ChequeEntity extends AuditEntity {
+public class PaymentEntity extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "rent_id", nullable = false)
@@ -27,15 +28,17 @@ public class ChequeEntity extends AuditEntity {
 
     private BigDecimal price;
 
-    private String bankChequeNumber;
+    private String bankId;
 
-    private Boolean paid;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status = PaymentStatus.CREATING;
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ChequeEntity that = (ChequeEntity) o;
+        PaymentEntity that = (PaymentEntity) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

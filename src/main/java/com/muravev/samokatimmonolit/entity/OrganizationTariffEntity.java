@@ -31,6 +31,8 @@ public class OrganizationTariffEntity extends AuditEntity implements Comparable<
     @JoinColumn(name = "org_id")
     private OrganizationEntity organization;
 
+    private BigDecimal deposit = BigDecimal.ONE;
+
     @Column(nullable = false)
     private BigDecimal price;
 

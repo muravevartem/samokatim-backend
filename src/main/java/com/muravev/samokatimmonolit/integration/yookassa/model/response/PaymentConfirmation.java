@@ -8,6 +8,6 @@ public record PaymentConfirmation(
         @JsonProperty("confirmation_token")
         String token,
         @JsonProperty("confirmation_url")
-        String confirmationUrl
+        String url
 ) {
 }

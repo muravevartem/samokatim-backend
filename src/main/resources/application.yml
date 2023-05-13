@@ -45,6 +45,7 @@ integration:
   yookassa:
     username: '317492'
     secret-key: 'test_hEyGZkw2Zgm4rfFGdgVSdkyRa4f5MSQzbNjfwhUUx6c'
+    return-url: 'https://1304294-cu57808.tw1.ru'
 
 
 

@@ -5,19 +5,19 @@ import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
+import com.muravev.samokatimmonolit.model.RentStatus;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
 import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 import com.muravev.samokatimmonolit.repo.InventoryMonitoringRepo;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.repo.RentRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
-import com.muravev.samokatimmonolit.service.PaymentService;
-import com.muravev.samokatimmonolit.service.RentSaver;
-import com.muravev.samokatimmonolit.service.SecurityService;
+import com.muravev.samokatimmonolit.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +33,11 @@ import static java.util.function.Predicate.not;
 public class RentSaverImpl implements RentSaver {
     private final RentRepo rentRepo;
     private final TariffRepo tariffRepo;
-    private final InventoryRepo inventoryRepo;
+
     private final InventoryMonitoringRepo monitoringRepo;
+
+    private final InventorySaver inventorySaver;
+    private final InventoryReader inventoryReader;
 
     private final SecurityService securityService;
     private final ApplicationEventPublisher eventPublisher;
@@ -43,28 +46,25 @@ public class RentSaverImpl implements RentSaver {
 
     @Override
     @Transactional
-    public RentEntity start(RentCreateCommand command) {
+    public PaymentOptionsOut start(RentCreateCommand command) {
         ClientEntity currentClient = securityService.getCurrentClient();
-        InventoryEntity inventory = inventoryRepo.findById(command.inventoryId())
-                .filter(i -> i.getStatus() == InventoryStatus.PENDING)
-                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+
+        InventoryEntity inventory = inventoryReader.findByIdAsClient(command.inventoryId());
+
         OrganizationTariffEntity tariff = tariffRepo.findById(command.tariffId())
                 .filter(not(OrganizationTariffEntity::isDeleted))
                 .orElseThrow(() -> new ApiException(StatusCode.TARIFF_NOT_FOUND));
 
-        if (inventory.getOffice() != null)
-            inventory.setOffice(null);
-
-        inventory.setStatus(InventoryStatus.IN_WORK);
-        eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.IN_WORK));
-
         RentEntity rent = new RentEntity()
                 .setClient(currentClient)
                 .setInventory(inventory)
-                .setTariff(tariff)
-                .setStartTime(ZonedDateTime.now());
+                .setStatus(RentStatus.ACTIVE)
+                .setTariff(tariff);
 
-        return rentRepo.save(rent);
+        inventorySaver.changeStatus(inventory, InventoryStatus.IN_WORK);
+
+        RentEntity savedRent = rentRepo.save(rent);
+        return paymentService.deposit(savedRent);
     }
 
     @Override
@@ -75,8 +75,8 @@ public class RentSaverImpl implements RentSaver {
                 .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
         rent.setEndTime(ZonedDateTime.now());
         InventoryEntity inventory = rent.getInventory();
-        inventory.setStatus(InventoryStatus.PENDING);
         fixationTrack(rent);
+        inventorySaver.changeStatus(inventory, InventoryStatus.PENDING);
         eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.PENDING));
         return paymentService.pay(rent);
     }
