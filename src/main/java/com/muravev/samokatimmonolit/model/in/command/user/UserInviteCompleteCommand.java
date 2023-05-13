@@ -7,7 +7,7 @@ public record UserInviteCompleteCommand(
         @NotBlank
         String password,
         @NotBlank
-        @Length(min = 8, max = 8)
+        @Length(min = 6, max = 6)
         String code
 ) {
 }
