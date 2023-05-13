@@ -35,7 +35,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
-    private static final String RETURN_URL = "http://localhost:3000";
+    private static final String RETURN_URL = "https://1304294-cu57808.tw1.ru/home";
     private static final double SECONDS_PER_DAY = 86400;
 
 
