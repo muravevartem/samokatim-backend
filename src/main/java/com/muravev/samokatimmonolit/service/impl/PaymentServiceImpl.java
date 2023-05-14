@@ -85,20 +85,6 @@ public class PaymentServiceImpl implements PaymentService {
                 rent.getId().toString(),
                 result,
                 "Аренда инвентаря #" + rent.getId(),
-                List.of(
-                        PaymentItem.builder()
-                                .amount(new PaymentAmount(resultPrice, PaymentCurrency.RUB))
-                                .description("Аренда инвентаря (%s)м".formatted(minutes))
-                                .quantity("1")
-                                .vatCode(1)
-                                .build(),
-                        PaymentItem.builder()
-                                .amount(new PaymentAmount(initialPrice, PaymentCurrency.RUB))
-                                .description("Начало аренды")
-                                .quantity("1")
-                                .vatCode(1)
-                                .build()
-                ),
                 RETURN_URL,
                 rent.getClient()
         );
@@ -129,14 +115,6 @@ public class PaymentServiceImpl implements PaymentService {
                 rent.getId().toString(),
                 resultPrice,
                 "Аренда инвентаря #" + rent.getId(),
-                List.of(
-                        PaymentItem.builder()
-                                .amount(new PaymentAmount(resultPrice, PaymentCurrency.RUB))
-                                .description("Аренда инвентаря (%s)д".formatted(days))
-                                .quantity("1")
-                                .vatCode(1)
-                                .build()
-                ),
                 RETURN_URL,
                 rent.getClient()
         );
@@ -167,14 +145,6 @@ public class PaymentServiceImpl implements PaymentService {
                 rent.getId().toString(),
                 depositPrice,
                 description,
-                List.of(
-                        PaymentItem.builder()
-                                .amount(new PaymentAmount(depositPrice, PaymentCurrency.RUB))
-                                .description(description)
-                                .vatCode(1)
-                                .quantity("1")
-                                .build()
-                ),
                 RETURN_URL,
                 rent.getClient()
         );
@@ -226,8 +196,6 @@ public class PaymentServiceImpl implements PaymentService {
             case WAITING_FOR_CAPTURE -> {
                 if (rent.getStatus() == RentStatus.STARTING) {
                     providerPayment.debit(deposit.getBankId());
-                } else {
-                    providerPayment.cancel(deposit.getBankId());
                 }
             }
             case PENDING -> {
@@ -269,14 +237,6 @@ public class PaymentServiceImpl implements PaymentService {
                             deposit.getBankId(),
                             deposit.getPrice(),
                             description,
-                            List.of(
-                                    PaymentItem.builder()
-                                            .amount(new PaymentAmount(deposit.getPrice(), PaymentCurrency.RUB))
-                                            .description(description)
-                                            .vatCode(1)
-                                            .quantity("1")
-                                            .build()
-                            ),
                             Hibernate.unproxy(rent.getClient(), ClientEntity.class)
                     );
                     deposit.setRefundBankId(refund.id())
@@ -285,12 +245,8 @@ public class PaymentServiceImpl implements PaymentService {
 
             }
             case WAITING_FOR_CAPTURE -> {
-                if (rent.getStatus() == RentStatus.COMPLETED) {
-                    providerPayment.debit(payment.getBankId());
-                    payment.setStatus(PaymentStatus.CONFIRMED);
-                } else {
-                    providerPayment.cancel(payment.getBankId());
-                }
+                providerPayment.debit(payment.getBankId());
+                payment.setStatus(PaymentStatus.CONFIRMED);
             }
             case PENDING -> {
             }

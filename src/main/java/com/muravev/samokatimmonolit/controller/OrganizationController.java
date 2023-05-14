@@ -2,10 +2,7 @@ package com.muravev.samokatimmonolit.controller;
 
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.mapper.OrganizationMapper;
-import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationChangeLogoCommand;
-import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationCreateCommand;
-import com.muravev.samokatimmonolit.model.in.command.organization.TariffAddCommand;
-import com.muravev.samokatimmonolit.model.in.command.organization.TariffDeleteCommand;
+import com.muravev.samokatimmonolit.model.in.command.organization.*;
 import com.muravev.samokatimmonolit.model.out.OrganizationCompactOut;
 import com.muravev.samokatimmonolit.model.out.OrganizationFullOut;
 import com.muravev.samokatimmonolit.model.out.TariffOut;
@@ -46,18 +43,22 @@ public class OrganizationController {
         return organizationMapper.toFullDto(createdOrganization);
     }
 
+    @GetMapping("/me/tariffs")
+    public Set<TariffOut> getTariffs() {
+        return getMyOrg().tariffs();
+    }
+
     @PostMapping("/me/tariffs")
     public OrganizationFullOut addTariff(@Valid @RequestBody TariffAddCommand command) {
         OrganizationEntity organization = organizationSaver.addTariff(command);
         return organizationMapper.toFullDto(organization);
     }
 
-    @PostMapping("/me/logo")
-    public OrganizationFullOut changeAvatar(@Valid @RequestBody OrganizationChangeLogoCommand command) {
-        OrganizationEntity organization = organizationSaver.changeLogo(command);
+    @PutMapping("/me/tariffs/{id}")
+    public OrganizationFullOut updateTariff(@PathVariable long id, @Valid @RequestBody TariffChangeCommand command) {
+        OrganizationEntity organization = organizationSaver.changeTariff(id, command);
         return organizationMapper.toFullDto(organization);
     }
-
 
     @DeleteMapping("/me/tariffs/{id}")
     public OrganizationFullOut OrganizationFullOut(@PathVariable long id) {
@@ -65,9 +66,12 @@ public class OrganizationController {
         return organizationMapper.toFullDto(organization);
     }
 
-    @GetMapping("/me/tariffs")
-    public Set<TariffOut> getTariffs() {
-        return getMyOrg().tariffs();
+
+    @PostMapping("/me/logo")
+    public OrganizationFullOut changeAvatar(@Valid @RequestBody OrganizationChangeLogoCommand command) {
+        OrganizationEntity organization = organizationSaver.changeLogo(command);
+        return organizationMapper.toFullDto(organization);
     }
+
 
 }

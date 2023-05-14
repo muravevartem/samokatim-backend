@@ -4,14 +4,12 @@ import com.muravev.samokatimmonolit.model.OrganizationTariffType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.util.List;
 
-@Builder
-public record TariffAddCommand(
+public record TariffChangeCommand(
         String alias,
         @Positive
         BigDecimal price,

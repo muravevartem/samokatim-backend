@@ -4,7 +4,6 @@ import com.muravev.samokatimmonolit.entity.UserEntity;
 import com.muravev.samokatimmonolit.integration.yookassa.error.InvalidStatusException;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentConfirmationType;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentCurrency;
-import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentItem;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentStatus;
 import com.muravev.samokatimmonolit.integration.yookassa.model.request.*;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.Payment;
@@ -23,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,7 +36,6 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
     public Payment hold(String orderId,
                         BigDecimal price,
                         String description,
-                        List<PaymentItem> items,
                         String returnUrl,
                         UserEntity customer) {
         PaymentRequest request = PaymentRequest.builder()
@@ -49,13 +46,6 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
                                 .returnUrl(returnUrl)
                                 .build()
                 )
-                .receipt(ReceiptRequest.builder()
-                        .customer(ReceiptCustomerRequest.builder()
-                                .email(customer.getEmail())
-                                .fullName("%s %s".formatted(customer.getLastName(), customer.getFirstName()))
-                                .build())
-                        .items(items)
-                        .build())
                 .capture(false)
                 .description(description)
                 .metadata(Map.of("order_id", orderId))
@@ -125,19 +115,11 @@ public class YooKassaPaymentServiceImpl implements YooKassaPaymentService {
                          String paymentId,
                          BigDecimal price,
                          String description,
-                         List<PaymentItem> items,
                          UserEntity customer) {
         RefundRequest refundRequest = RefundRequest.builder()
                 .paymentId(paymentId)
                 .amount(new PaymentAmount(price, PaymentCurrency.RUB))
                 .description(description)
-                .receipt(ReceiptRequest.builder()
-                        .customer(ReceiptCustomerRequest.builder()
-                                .email(customer.getEmail())
-                                .fullName("%s %s".formatted(customer.getLastName(), customer.getFirstName()))
-                                .build())
-                        .items(items)
-                        .build())
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         int hash = Objects.hash(paymentId, Instant.now().toEpochMilli());

@@ -1,17 +1,12 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
-import com.muravev.samokatimmonolit.entity.FileEntity;
-import com.muravev.samokatimmonolit.entity.OrganizationEntity;
-import com.muravev.samokatimmonolit.entity.OrganizationTariffEntity;
+import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataOrganizationService;
 import com.muravev.samokatimmonolit.model.OrganizationStatus;
-import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationChangeLogoCommand;
-import com.muravev.samokatimmonolit.model.in.command.organization.OrganizationCreateCommand;
-import com.muravev.samokatimmonolit.model.in.command.organization.TariffAddCommand;
-import com.muravev.samokatimmonolit.model.in.command.organization.TariffDeleteCommand;
+import com.muravev.samokatimmonolit.model.OrganizationTariffType;
+import com.muravev.samokatimmonolit.model.in.command.organization.*;
 import com.muravev.samokatimmonolit.repo.FileRepo;
 import com.muravev.samokatimmonolit.repo.OrganizationRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
@@ -24,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 @RequiredArgsConstructor
@@ -68,14 +65,57 @@ public class OrganizationSaverImpl implements OrganizationSaver {
         EmployeeEntity employee = securityService.getCurrentEmployee();
         OrganizationEntity organization = employee.getOrganization();
         Set<OrganizationTariffEntity> existedTariffs = organization.getTariffs();
-        OrganizationTariffEntity tariff = new OrganizationTariffEntity()
-                .setType(command.type())
-                .setPrice(command.price())
-                .setName(command.alias())
-                .setOrganization(organization);
+        OrganizationTariffEntity tariff = switch (command.type()) {
+            case MINUTE_BY_MINUTE -> new OrganizationTariffEntity()
+                    .setType(OrganizationTariffType.MINUTE_BY_MINUTE)
+                    .setPrice(command.price())
+                    .setInitialPrice(command.initialPrice())
+                    .setDeposit(command.deposit())
+                    .setName(command.alias())
+                    .setDays(new TreeSet<>(command.days()))
+                    .setOrganization(organization);
+            case LONG_TERM -> new OrganizationTariffEntity()
+                    .setType(OrganizationTariffType.LONG_TERM)
+                    .setPrice(command.price())
+                    .setDeposit(command.deposit())
+                    .setName(command.alias())
+                    .setDays(new TreeSet<>(command.days()))
+                    .setOrganization(organization);
+        };
 
         existedTariffs.add(tariff);
         return organization;
+    }
+
+    @Override
+    @Transactional
+    public OrganizationEntity changeTariff(long id, TariffChangeCommand command) {
+        OrganizationTariffEntity tariff = tariffRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.TARIFF_NOT_FOUND));
+        Set<InventoryEntity> inventories = tariff.getInventories();
+        OrganizationTariffEntity updated = switch (command.type()) {
+            case MINUTE_BY_MINUTE -> new OrganizationTariffEntity()
+                    .setType(OrganizationTariffType.MINUTE_BY_MINUTE)
+                    .setPrice(command.price())
+                    .setInitialPrice(command.initialPrice())
+                    .setDeposit(command.deposit())
+                    .setName(command.alias())
+                    .setDays(new TreeSet<>(command.days()))
+                    .setInventories(new HashSet<>(inventories))
+                    .setOrganization(tariff.getOrganization());
+            case LONG_TERM -> new OrganizationTariffEntity()
+                    .setType(OrganizationTariffType.LONG_TERM)
+                    .setPrice(command.price())
+                    .setDeposit(command.deposit())
+                    .setName(command.alias())
+                    .setDays(new TreeSet<>(command.days()))
+                    .setInventories(new HashSet<>(inventories))
+                    .setOrganization(tariff.getOrganization());
+        };
+        OrganizationTariffEntity deletedTariff = tariff.setDeletedAt(ZonedDateTime.now());
+        tariffRepo.save(deletedTariff);
+        OrganizationTariffEntity savedTariff = tariffRepo.save(updated);
+        return savedTariff.getOrganization();
     }
 
     @Override

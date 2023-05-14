@@ -8,11 +8,9 @@ import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(name = "org_tariff")
@@ -31,6 +29,9 @@ public class OrganizationTariffEntity extends AuditEntity implements Comparable<
     @JoinColumn(name = "org_id")
     private OrganizationEntity organization;
 
+    @ManyToMany(mappedBy = "tariffs")
+    private Set<InventoryEntity> inventories = new HashSet<>();
+
     private BigDecimal deposit = BigDecimal.ONE;
 
     @Column(nullable = false)
@@ -42,6 +43,10 @@ public class OrganizationTariffEntity extends AuditEntity implements Comparable<
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrganizationTariffType type;
+
+    @ElementCollection
+    @CollectionTable(name = "tariff_day")
+    private SortedSet<DayOfWeek> days = new TreeSet<>();
 
     private ZonedDateTime deletedAt;
 
