@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record InventoryCreateCommand(
-        @NotBlank
-        String alias,
         @NotNull
         @Valid
         InventoryModelIn model,

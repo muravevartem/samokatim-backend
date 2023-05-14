@@ -19,7 +19,7 @@ public record TariffAddCommand(
         BigDecimal deposit,
         @NotNull
         OrganizationTariffType type,
-        @NotEmpty
+
         List<DayOfWeek> days
 ) {
 }

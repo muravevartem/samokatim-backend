@@ -11,7 +11,7 @@ import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record TariffOut(
         Long id,
         @JsonProperty("alias")

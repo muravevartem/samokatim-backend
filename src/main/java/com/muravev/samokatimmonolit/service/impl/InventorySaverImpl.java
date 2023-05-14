@@ -6,6 +6,7 @@ import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
+import com.muravev.samokatimmonolit.model.InventoryType;
 import com.muravev.samokatimmonolit.model.in.InventoryModelIn;
 import com.muravev.samokatimmonolit.model.in.command.inventory.*;
 import com.muravev.samokatimmonolit.repo.InventoryModelRepo;
@@ -16,6 +17,7 @@ import com.muravev.samokatimmonolit.service.InventorySaver;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,15 +50,22 @@ public class InventorySaverImpl implements InventorySaver {
 
         InventoryModelIn model = createCommand.model();
 
+        InventoryModelEntity inventoryModel = inventoryModelRepo.findById(model.id())
+                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_MODEL_NOT_FOUND));
+
+        InventoryType inventoryType = inventoryModel.getType();
 
         InventoryEntity inventory = new InventoryEntity();
         inventory.setInventoryClass(createCommand.inventoryClass());
-        inventory.setModel(inventoryModelRepo.getReferenceById(model.id()));
+        inventory.setModel(inventoryModel);
         inventory.setOrganization(organization);
-        inventory.setAlias(createCommand.alias());
         inventory.setSupportsTelemetry(createCommand.supportsTelemetry());
         inventory.setStatus(InventoryStatus.UNDER_REPAIR);//По умолчанию на старте числиться в ремонте
-        return inventoryRepo.save(inventory);
+        InventoryEntity save = inventoryRepo.save(inventory);
+        String formattedId = StringUtils.leftPad(save.getId().toString(), 6, "0");
+        String alias = formattedId.substring(0, 3) + "-" + formattedId.substring(3, 6) + "-" + organization.getId();
+        save.setAlias(alias);
+        return save;
     }
 
     @Override

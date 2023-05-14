@@ -100,7 +100,6 @@ public class OrganizationSaverImpl implements OrganizationSaver {
                     .setInitialPrice(command.initialPrice())
                     .setDeposit(command.deposit())
                     .setName(command.alias())
-                    .setDays(new TreeSet<>(command.days()))
                     .setInventories(new HashSet<>(inventories))
                     .setOrganization(tariff.getOrganization());
             case LONG_TERM -> new OrganizationTariffEntity()
@@ -108,7 +107,6 @@ public class OrganizationSaverImpl implements OrganizationSaver {
                     .setPrice(command.price())
                     .setDeposit(command.deposit())
                     .setName(command.alias())
-                    .setDays(new TreeSet<>(command.days()))
                     .setInventories(new HashSet<>(inventories))
                     .setOrganization(tariff.getOrganization());
         };
