@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -53,12 +54,4 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
             WHERE rent.createdAt < :cancelTime AND rent.status = 'STARTING'
             """)
     List<RentEntity> findAllStartingRents(ZonedDateTime cancelTime);
-
-    @Query(nativeQuery = true,
-            value = """
-                    select count(*) from rent
-                    where rent.status = 'COMPLETED' AND :date::DATE = rent.end_time::DATE
-                    """
-    )
-    Integer countCompletedByDate(ZonedDateTime date);
 }

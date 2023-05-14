@@ -6,4 +6,6 @@ public interface OrganizationReader {
     OrganizationEntity getByInn(String inn);
 
     OrganizationEntity getMyOrg();
+
+    double getMyRevenue();
 }

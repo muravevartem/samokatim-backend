@@ -1,5 +1,6 @@
 package com.muravev.samokatimmonolit.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.mapper.OrganizationMapper;
 import com.muravev.samokatimmonolit.model.in.command.organization.*;
@@ -10,8 +11,10 @@ import com.muravev.samokatimmonolit.service.OrganizationReader;
 import com.muravev.samokatimmonolit.service.OrganizationSaver;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.codehaus.jackson.map.util.JSONWrappedObject;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -71,6 +74,12 @@ public class OrganizationController {
     public OrganizationFullOut changeAvatar(@Valid @RequestBody OrganizationChangeLogoCommand command) {
         OrganizationEntity organization = organizationSaver.changeLogo(command);
         return organizationMapper.toFullDto(organization);
+    }
+
+    @GetMapping("/me/revenue")
+    public Map<?,?> getRevenue() {
+        double revenue = organizationReader.getMyRevenue();
+        return Map.of("value", revenue);
     }
 
 

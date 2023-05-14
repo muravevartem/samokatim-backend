@@ -39,4 +39,12 @@ public class OrganizationReaderImpl implements OrganizationReader {
         EmployeeEntity employee = securityService.getCurrentEmployee();
         return employee.getOrganization();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double getMyRevenue() {
+        EmployeeEntity employee = securityService.getCurrentEmployee();
+        return organizationRepo.getRevenue(employee.getOrganization())
+                .orElse(0.);
+    }
 }
