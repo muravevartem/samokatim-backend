@@ -50,10 +50,11 @@ public class OrganizationTariffEntity extends AuditEntity implements Comparable<
 
     private ZonedDateTime deletedAt;
 
-    public void setInventories(Set<InventoryEntity> inventories) {
+    public OrganizationTariffEntity setInventories(Set<InventoryEntity> inventories) {
         this.inventories.clear();
         this.inventories.addAll(inventories);
         inventories.forEach(inventory -> inventory.getTariffs().add(this));
+        return this;
     }
 
     public boolean isDeleted() {
