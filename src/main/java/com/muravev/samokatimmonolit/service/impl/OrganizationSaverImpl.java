@@ -110,9 +110,9 @@ public class OrganizationSaverImpl implements OrganizationSaver {
                     .setInventories(new HashSet<>(inventories))
                     .setOrganization(tariff.getOrganization());
         };
+        OrganizationTariffEntity savedTariff = tariffRepo.save(updated);
         OrganizationTariffEntity deletedTariff = tariff.setDeletedAt(ZonedDateTime.now());
         tariffRepo.save(deletedTariff);
-        OrganizationTariffEntity savedTariff = tariffRepo.save(updated);
         return savedTariff.getOrganization();
     }
 
