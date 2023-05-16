@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmessage.GeoPointReceivedMessage;
+import com.muravev.samokatimmessage.GeoPointNewMessage;
 import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
@@ -162,10 +162,10 @@ public class InventorySaverImpl implements InventorySaver {
 
     @Override
     @Transactional
-    public void savePoint(GeoPointReceivedMessage message) {
-        Long inventoryId = message.getInventoryId();
+    public void savePoint(GeoPointNewMessage message) {
+        String inventoryId = message.getClientId();
         log.info("New geo point for inventory {}", inventoryId);
-        InventoryEntity inventory = inventoryRepo.findById(inventoryId)
+        InventoryEntity inventory = inventoryRepo.findByAlias(inventoryId)
                 .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
         List<InventoryMonitoringEntity> monitoringRecord = inventory.getMonitoringRecord();
         ZonedDateTime timestamp = ZonedDateTime.ofInstant(Instant.ofEpochSecond(message.getTimestamp()), ZoneId.of("UTC"));

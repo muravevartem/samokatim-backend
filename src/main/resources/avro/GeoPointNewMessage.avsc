@@ -1,0 +1,50 @@
+{
+  "namespace": "com.muravev.samokatimmessage",
+  "type": "record",
+  "name": "GeoPointNewMessage",
+  "fields": [
+    {
+      "name": "clientId",
+      "type": "string"
+    },
+    {
+      "name": "satellites",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "name": "lat",
+      "type": [
+        "null",
+        "double"
+      ]
+    },
+    {
+      "name": "lng",
+      "type": [
+        "null",
+        "double"
+      ]
+    },
+    {
+      "name": "altitude",
+      "type": [
+        "null",
+        "double"
+      ]
+    },
+    {
+      "name": "speed",
+      "type": [
+        "null",
+        "double"
+      ]
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.kafka.listener;
 
-import com.muravev.samokatimmessage.GeoPointReceivedMessage;
+import com.muravev.samokatimmessage.GeoPointNewMessage;
 import com.muravev.samokatimmonolit.kafka.TopicName;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.service.InventorySaver;
@@ -16,8 +16,8 @@ public class GeoPointReceivedMessageListener {
     private final InventorySaver inventorySaver;
 
 
-    @KafkaListener(topics = TopicName.GEO_POINT_RECEIVED)
-    public void handle(GeoPointReceivedMessage message) {
+    @KafkaListener(topics = TopicName.NEW_GEOPOINT)
+    public void handle(GeoPointNewMessage message) {
         inventorySaver.savePoint(message);
     }
 }

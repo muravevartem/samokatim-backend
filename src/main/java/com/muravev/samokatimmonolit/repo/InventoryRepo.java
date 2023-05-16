@@ -53,4 +53,6 @@ public interface InventoryRepo extends JpaRepository<InventoryEntity, Long> {
                                               @Param("lngSW") double lngSW,
                                               @Param("client") ClientEntity client);
 
+    Optional<InventoryEntity> findByAlias(String alias);
+
 }

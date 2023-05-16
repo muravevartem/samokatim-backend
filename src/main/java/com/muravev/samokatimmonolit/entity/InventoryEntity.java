@@ -24,6 +24,7 @@ public class InventoryEntity extends AuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String alias;
 
     @ManyToOne(fetch = FetchType.LAZY)
