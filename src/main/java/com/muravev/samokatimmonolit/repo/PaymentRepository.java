@@ -1,8 +1,6 @@
 package com.muravev.samokatimmonolit.repo;
 
-import com.muravev.samokatimmonolit.entity.DepositEntity;
 import com.muravev.samokatimmonolit.entity.PaymentEntity;
-import com.muravev.samokatimmonolit.model.DespositStatus;
 import com.muravev.samokatimmonolit.model.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 

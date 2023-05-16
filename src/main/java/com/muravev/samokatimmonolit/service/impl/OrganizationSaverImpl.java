@@ -6,6 +6,7 @@ import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataOrganizationService;
 import com.muravev.samokatimmonolit.model.OrganizationStatus;
 import com.muravev.samokatimmonolit.model.OrganizationTariffType;
+import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeInviteCommand;
 import com.muravev.samokatimmonolit.model.in.command.organization.*;
 import com.muravev.samokatimmonolit.repo.FileRepo;
 import com.muravev.samokatimmonolit.repo.OrganizationRepo;
@@ -56,7 +57,11 @@ public class OrganizationSaverImpl implements OrganizationSaver {
     }
 
     private void inviteFatherEmployee(OrganizationEntity organization) {
-        employeeSaver.invite(organization.getEmail(), organization);
+        employeeSaver.invite(new EmployeeInviteCommand(
+                        "",
+                        "Администратор",
+                        organization.getEmail()),
+                organization);
     }
 
     @Override

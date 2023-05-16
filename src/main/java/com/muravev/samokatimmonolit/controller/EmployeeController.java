@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.controller;
 import com.muravev.samokatimmonolit.entity.EmployeeEntity;
 import com.muravev.samokatimmonolit.mapper.UserMapper;
 import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeInviteCommand;
+import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeUpdateCommand;
 import com.muravev.samokatimmonolit.model.out.EmployeeOut;
 import com.muravev.samokatimmonolit.service.EmployeeReader;
 import com.muravev.samokatimmonolit.service.EmployeeSaver;
@@ -30,15 +31,7 @@ public class EmployeeController {
                 .map(userMapper::toDto);
     }
 
-    @GetMapping(value = "/{id}", params = {"colleague"})
-    @Secured("ROLE_LOCAL_ADMIN")
-    public EmployeeOut findColleagueById(@PathVariable long id) {
-        EmployeeEntity employee = employeeReader.findByIdAsEmployee(id);
-        return userMapper.toDto(employee);
-    }
-
     @GetMapping(value = "/{id}")
-    @Secured("ROLE_GLOBAL_ADMIN")
     public EmployeeOut findById(@PathVariable long id) {
         EmployeeEntity employee = employeeReader.findById(id);
         return userMapper.toDto(employee);
@@ -50,6 +43,12 @@ public class EmployeeController {
     public EmployeeOut invite(@RequestBody @Valid EmployeeInviteCommand command) {
         EmployeeEntity invitedColleague = employeeSaver.inviteColleague(command);
         return userMapper.toDto(invitedColleague);
+    }
+
+    @PutMapping("/{id}")
+    public EmployeeOut update(@PathVariable long id, @RequestBody @Valid EmployeeUpdateCommand command) {
+        EmployeeEntity employee = employeeSaver.update(id, command);
+        return userMapper.toDto(employee);
     }
 
     @DeleteMapping("/{id}")

@@ -1,8 +1,6 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
-import com.muravev.samokatimmonolit.entity.InventoryMonitoringEntity;
-import com.muravev.samokatimmonolit.entity.RentEntity;
+import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.model.in.MapViewIn;
@@ -93,6 +91,24 @@ public class RentReaderImpl implements RentReader {
                         : rent.getEndTime()
         );
         return new TreeSet<>(track);
+    }
+
+    @Override
+    public Page<RentEntity> findAll(long orgId, Pageable pageable) {
+        return rentRepo.findAllByOrganization(new OrganizationEntity().setId(orgId), pageable);
+    }
+
+    @Override
+    public Page<RentEntity> findMyOrgAll(Pageable pageable) {
+        EmployeeEntity employee = securityService.getCurrentEmployee();
+        OrganizationEntity organization = employee.getOrganization();
+        return rentRepo.findAllByOrganization(organization, pageable);
+    }
+
+    @Override
+    public RentEntity findById(long id) {
+        return rentRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
     }
 
 }

@@ -3,7 +3,7 @@ package com.muravev.samokatimmonolit.model.in.command.employee;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record EmployeeInviteCommand(
+public record EmployeeUpdateCommand(
         @NotBlank
         String firstName,
         @NotBlank

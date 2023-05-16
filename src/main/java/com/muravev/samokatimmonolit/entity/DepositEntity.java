@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.entity;
 
-import com.muravev.samokatimmonolit.model.DespositStatus;
+import com.muravev.samokatimmonolit.model.DepositStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,7 +36,7 @@ public class DepositEntity extends AuditEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private DespositStatus status = DespositStatus.CREATING;
+    private DepositStatus status = DepositStatus.CREATING;
 
 
     @Override

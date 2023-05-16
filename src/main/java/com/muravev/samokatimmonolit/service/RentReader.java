@@ -23,4 +23,10 @@ public interface RentReader {
     RentEntity findMyById(long id);
 
     SortedSet<InventoryMonitoringEntity> getTrack(long id);
+
+    Page<RentEntity> findAll(long orgId, Pageable pageable);
+
+    Page<RentEntity> findMyOrgAll(Pageable pageable);
+
+    RentEntity findById(long id);
 }

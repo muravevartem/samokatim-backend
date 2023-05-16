@@ -8,7 +8,8 @@ import org.mapstruct.Mapper;
 @Mapper(uses = {
         InventoryMapper.class,
         TariffMapper.class,
-        ChequeMapper.class,
+        PaymentMapper.class,
+        DepositMapper.class,
         InventoryMonitoringRecordMapper.class
 })
 public interface RentMapper {

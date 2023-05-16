@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.model;
 
-public enum DespositStatus {
+public enum DepositStatus {
     CREATING,
     PENDING,
     HOLD,

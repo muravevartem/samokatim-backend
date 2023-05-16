@@ -8,6 +8,7 @@ import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.kafka.producer.EmployeeEmailProducer;
 import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeInviteCommand;
+import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeUpdateCommand;
 import com.muravev.samokatimmonolit.repo.EmployeeRepo;
 import com.muravev.samokatimmonolit.repo.UserRepo;
 import com.muravev.samokatimmonolit.service.EmployeeSaver;
@@ -15,14 +16,12 @@ import com.muravev.samokatimmonolit.service.SecurityService;
 import com.muravev.samokatimmonolit.service.UserInviter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,13 +40,13 @@ public class EmployeeSaverImpl implements EmployeeSaver {
     public EmployeeEntity inviteColleague(EmployeeInviteCommand command) {
         EmployeeEntity currentEmployee = securityService.getCurrentEmployee();
         OrganizationEntity organization = currentEmployee.getOrganization();
-        return invite(command.email(), organization);
+        return invite(command, organization);
     }
 
     @Override
     @Transactional
-    public EmployeeEntity invite(String email, OrganizationEntity organization) {
-        Optional<UserEntity> byEmail = userRepo.findByEmail(email.toLowerCase());
+    public EmployeeEntity invite(EmployeeInviteCommand command, OrganizationEntity organization) {
+        Optional<UserEntity> byEmail = userRepo.findByEmail(command.email().toLowerCase());
         if (byEmail.isPresent()) {
             throw new ApiException(StatusCode.USER_ALREADY_EXIST);
         }
@@ -55,7 +54,9 @@ public class EmployeeSaverImpl implements EmployeeSaver {
         EmployeeEntity employee = new EmployeeEntity();
 
         employee.setOrganization(organization)
-                .setEmail(email.toLowerCase())
+                .setEmail(command.email().toLowerCase())
+                .setFirstName(command.firstName())
+                .setLastName(command.lastName())
                 .setNotConfirmed(true);
         EmployeeEntity savedEmployee = userRepo.save(employee);
         UserInviteEntity invite = userInviter.invite(savedEmployee, Duration.ofMinutes(15));
@@ -76,5 +77,16 @@ public class EmployeeSaverImpl implements EmployeeSaver {
         }
         employee.setRetired(true)
                 .setRetiredAt(ZonedDateTime.now());
+    }
+
+    @Override
+    @Transactional
+    public EmployeeEntity update(long id, EmployeeUpdateCommand command) {
+        EmployeeEntity employee = employeeRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.USER_NOT_FOUND));
+        employee.setEmail(command.email().trim())
+                .setLastName(command.lastName().trim())
+                .setFirstName(command.firstName().trim());
+        return employee;
     }
 }

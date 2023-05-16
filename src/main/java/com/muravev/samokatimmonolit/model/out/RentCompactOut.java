@@ -12,6 +12,6 @@ public record RentCompactOut(
         @JsonFormat(pattern = JsonTimeFormat.ISO_DATE_TIME)
         ZonedDateTime endTime,
         InventoryCompactOut inventory,
-        ChequeOut cheque
+        PaymentOut cheque
 ) {
 }

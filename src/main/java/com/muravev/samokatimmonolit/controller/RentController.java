@@ -33,6 +33,12 @@ public class RentController {
     private final RentMapper rentMapper;
     private final InventoryMonitoringRecordMapper monitoringRecordMapper;
 
+    @GetMapping(params = {"my-org", "page", "size"})
+    public Page<RentOut> findAll(Pageable pageable) {
+        return rentReader.findMyOrgAll(pageable)
+                .map(rentMapper::toDto);
+    }
+
     @GetMapping(params = {"my", "active"})
     public List<RentOut> findMyActiveAll() {
         List<RentEntity> activeRents = rentReader.findMyActiveAll();
@@ -45,6 +51,12 @@ public class RentController {
     public Page<RentCompactOut> findMyAll(Pageable pageable) {
         return rentReader.findMyAll(pageable)
                 .map(rentMapper::toCompactDto);
+    }
+
+    @GetMapping(value = "/{id}", params = "full")
+    public RentOut findById(@PathVariable long id) {
+        RentEntity rent = rentReader.findById(id);
+        return rentMapper.toDto(rent);
     }
 
     @GetMapping("/{id}")
