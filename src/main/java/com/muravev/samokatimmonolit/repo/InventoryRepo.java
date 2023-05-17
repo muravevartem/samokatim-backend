@@ -28,8 +28,10 @@ public interface InventoryRepo extends JpaRepository<InventoryEntity, Long> {
             WHERE inventory.lastMonitoringRecord.lng BETWEEN :lngSW AND :lngNE
                 AND
                 inventory.lastMonitoringRecord.lat BETWEEN :latSW AND :latNE
-                AND 
+                AND
                 inventory.status = :status
+                AND
+                inventory.organization.status = 'APPROVED'
             ORDER BY inventory.id DESC
             """)
     List<InventoryEntity> findAllByViewAndStatus(@Param("latNE") double latNE,
