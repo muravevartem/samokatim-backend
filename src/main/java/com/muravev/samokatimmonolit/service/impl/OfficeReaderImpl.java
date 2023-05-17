@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.entity.OfficeEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.error.ApiException;

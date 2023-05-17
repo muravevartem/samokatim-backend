@@ -15,6 +15,8 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "http://localhost:3001",
                         "http://b2b.1304294-cu57808.tw1.ru",
                         "https://b2b.1304294-cu57808.tw1.ru",
+                        "http://admin.1304294-cu57808.tw1.ru",
+                        "https://admin.1304294-cu57808.tw1.ru",
                         "http://1304294-cu57808.tw1.ru",
                         "https://1304294-cu57808.tw1.ru"
                 )

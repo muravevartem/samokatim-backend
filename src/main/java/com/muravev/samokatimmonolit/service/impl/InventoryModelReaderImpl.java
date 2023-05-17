@@ -1,7 +1,7 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.InventoryModelEntity;
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.repo.InventoryModelRepo;
 import com.muravev.samokatimmonolit.service.InventoryModelReader;
 import com.muravev.samokatimmonolit.service.SecurityService;

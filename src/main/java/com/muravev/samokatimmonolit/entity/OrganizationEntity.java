@@ -1,5 +1,6 @@
 package com.muravev.samokatimmonolit.entity;
 
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.model.OrganizationStatus;
 import jakarta.persistence.*;
 import lombok.*;

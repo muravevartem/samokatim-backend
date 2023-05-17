@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.repo;
 
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

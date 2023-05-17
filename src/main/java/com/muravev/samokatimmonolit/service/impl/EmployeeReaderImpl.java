@@ -1,10 +1,11 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.repo.EmployeeRepo;
+import com.muravev.samokatimmonolit.repo.OrganizationRepo;
 import com.muravev.samokatimmonolit.service.EmployeeReader;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class EmployeeReaderImpl implements EmployeeReader {
+    private final OrganizationRepo organizationRepo;
     private final EmployeeRepo employeeRepo;
     private final SecurityService securityService;
 
@@ -50,5 +52,12 @@ public class EmployeeReaderImpl implements EmployeeReader {
     public EmployeeEntity findById(long id) {
         return employeeRepo.findById(id)
                 .orElseThrow(() -> new ApiException(StatusCode.USER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EmployeeEntity> findAll(long orgId, Pageable pageable) {
+        OrganizationEntity organization = organizationRepo.getReferenceById(orgId);
+        return employeeRepo.findAllByOrganization(organization, true, pageable);
     }
 }

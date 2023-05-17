@@ -6,6 +6,12 @@ import com.muravev.samokatimmonolit.model.in.command.organization.*;
 public interface OrganizationSaver {
     OrganizationEntity create(OrganizationCreateCommand command);
 
+    OrganizationEntity verify(long id);
+
+    OrganizationEntity block(long id);
+
+    OrganizationEntity unblock(long id);
+
     OrganizationEntity addTariff(TariffAddCommand command);
 
     OrganizationEntity changeTariff(long id, TariffChangeCommand command);

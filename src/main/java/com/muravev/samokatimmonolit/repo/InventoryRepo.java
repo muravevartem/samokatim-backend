@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.repo;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.entity.InventoryEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.model.InventoryStatus;

@@ -1,5 +1,6 @@
-package com.muravev.samokatimmonolit.entity;
+package com.muravev.samokatimmonolit.entity.user;
 
+import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

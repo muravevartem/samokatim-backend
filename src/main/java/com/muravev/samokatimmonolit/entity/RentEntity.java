@@ -1,5 +1,6 @@
 package com.muravev.samokatimmonolit.entity;
 
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.model.RentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

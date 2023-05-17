@@ -1,6 +1,8 @@
 package com.muravev.samokatimmonolit.repo;
 
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,4 +17,10 @@ public interface OrganizationRepo extends JpaRepository<OrganizationEntity, Long
                     AND payment.status = 'COMPLETED'
             """)
     Optional<Double> getRevenue(OrganizationEntity organization);
+
+    @Query("""
+            SELECT org FROM OrganizationEntity org
+            WHERE LOWER(org.name) LIKE CONCAT('%', LOWER(:keyword), '%')
+            """)
+    Page<OrganizationEntity> findAllByKeyword(String keyword, Pageable pageable);
 }

@@ -1,15 +1,13 @@
 package com.muravev.samokatimmonolit.kafka.producer;
 
 import com.muravev.samokatimmessage.EmailInviteClientMessage;
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.entity.UserInviteEntity;
 import com.muravev.samokatimmonolit.kafka.TopicName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

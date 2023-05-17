@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.service;
 
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.entity.UserInviteEntity;
 import com.muravev.samokatimmonolit.model.in.command.user.UserInviteCompleteCommand;
 

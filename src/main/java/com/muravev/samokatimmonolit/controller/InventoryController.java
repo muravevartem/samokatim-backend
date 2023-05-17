@@ -30,14 +30,12 @@ public class InventoryController {
 
 
     @GetMapping(params = {"page", "size", "my", "keyword"})
-    @Secured("ROLE_LOCAL_ADMIN")
     public Page<InventoryFullOut> findAllAsEmployee(@RequestParam("keyword") String keyword, Pageable pageable) {
         return inventoryReader.findAllAsEmployee(keyword, pageable)
                 .map(inventoryMapper::toFullDto);
     }
 
     @GetMapping(value = "/{id}", params = "my")
-    @Secured("ROLE_LOCAL_ADMIN")
     public InventoryFullOut findByIdAsEmployee(@PathVariable long id) {
         InventoryEntity byIdAsEmployee = inventoryReader.findByIdAsEmployee(id);
         return inventoryMapper.toFullDto(byIdAsEmployee);

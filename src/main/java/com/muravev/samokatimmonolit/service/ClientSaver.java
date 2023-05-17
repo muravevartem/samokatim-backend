@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.service;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.model.in.command.client.*;
 
 public interface ClientSaver {

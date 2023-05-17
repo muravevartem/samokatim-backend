@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.repo;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

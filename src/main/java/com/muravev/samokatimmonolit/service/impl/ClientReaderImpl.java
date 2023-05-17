@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.service.ClientReader;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;

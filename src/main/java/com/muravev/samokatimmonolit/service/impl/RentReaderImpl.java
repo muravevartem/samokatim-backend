@@ -1,6 +1,8 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.*;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.model.in.MapViewIn;

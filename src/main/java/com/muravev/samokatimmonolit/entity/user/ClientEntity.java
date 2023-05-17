@@ -1,14 +1,13 @@
-package com.muravev.samokatimmonolit.entity;
+package com.muravev.samokatimmonolit.entity.user;
 
+import com.muravev.samokatimmonolit.entity.RentEntity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("CLIENT")

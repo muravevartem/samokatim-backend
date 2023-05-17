@@ -1,6 +1,7 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.*;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
@@ -9,7 +10,6 @@ import com.muravev.samokatimmonolit.model.RentStatus;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
 import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 import com.muravev.samokatimmonolit.repo.InventoryMonitoringRepo;
-import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.repo.RentRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
 import com.muravev.samokatimmonolit.service.*;
@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

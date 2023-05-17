@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.controller;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.mapper.UserMapper;
 import com.muravev.samokatimmonolit.model.in.command.client.*;
 import com.muravev.samokatimmonolit.model.out.ClientOut;

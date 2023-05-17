@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.integration.yookassa.service.impl;
 
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.integration.yookassa.error.InvalidStatusException;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentConfirmationType;
 import com.muravev.samokatimmonolit.integration.yookassa.model.PaymentCurrency;

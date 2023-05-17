@@ -1,7 +1,7 @@
 package com.muravev.samokatimmonolit.kafka.producer;
 
 import com.muravev.samokatimmessage.EmailInviteClientMessage;
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.entity.UserInviteEntity;
 import com.muravev.samokatimmonolit.kafka.TopicName;
 import lombok.RequiredArgsConstructor;

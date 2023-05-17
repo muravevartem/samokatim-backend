@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.integration.yookassa.service;
 
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.Payment;
 import com.muravev.samokatimmonolit.integration.yookassa.model.response.Refund;
 

@@ -1,6 +1,6 @@
 package com.muravev.samokatimmonolit.controller;
 
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.mapper.UserMapper;
 import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeInviteCommand;
 import com.muravev.samokatimmonolit.model.in.command.employee.EmployeeUpdateCommand;

@@ -1,8 +1,9 @@
 package com.muravev.samokatimmonolit.service;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.AdminEntity;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ public interface SecurityService {
     EmployeeEntity getCurrentEmployee();
 
     ClientEntity getCurrentClient();
+
+    AdminEntity getCurrentAdmin();
 }

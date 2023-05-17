@@ -1,8 +1,9 @@
 package com.muravev.samokatimmonolit.service.impl;
 
-import com.muravev.samokatimmonolit.entity.ClientEntity;
-import com.muravev.samokatimmonolit.entity.EmployeeEntity;
-import com.muravev.samokatimmonolit.entity.UserEntity;
+import com.muravev.samokatimmonolit.entity.user.AdminEntity;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
+import com.muravev.samokatimmonolit.entity.user.UserEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.repo.UserRepo;
@@ -55,6 +56,15 @@ public class SecurityServiceImpl implements SecurityService {
         UserEntity currentUser = Hibernate.unproxy(getCurrentUser(), UserEntity.class);
         if (currentUser instanceof ClientEntity client) {
             return client;
+        }
+        throw new ApiException(StatusCode.FORBIDDEN);
+    }
+
+    @Override
+    public AdminEntity getCurrentAdmin() {
+        UserEntity currentAdmin = Hibernate.unproxy(getCurrentUser(), UserEntity.class);
+        if (currentAdmin instanceof AdminEntity admin) {
+            return admin;
         }
         throw new ApiException(StatusCode.FORBIDDEN);
     }

@@ -1,6 +1,7 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.*;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataAddressService;
 import com.muravev.samokatimmonolit.model.Address;
 import com.muravev.samokatimmonolit.model.in.GeoPointIn;

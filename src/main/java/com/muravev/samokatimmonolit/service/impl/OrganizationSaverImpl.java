@@ -1,6 +1,7 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.*;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataOrganizationService;
@@ -62,6 +63,34 @@ public class OrganizationSaverImpl implements OrganizationSaver {
                         "Администратор",
                         organization.getEmail()),
                 organization);
+    }
+
+    @Override
+    @Transactional
+    public OrganizationEntity verify(long id) {
+        OrganizationEntity organization = organizationRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.ORGANIZATION_NOT_FOUND));
+        organization.setStatus(OrganizationStatus.APPROVED);
+        return organization;
+    }
+
+
+    @Override
+    @Transactional
+    public OrganizationEntity block(long id) {
+        OrganizationEntity organization = organizationRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.ORGANIZATION_NOT_FOUND));
+        organization.setStatus(OrganizationStatus.BLOCKED);
+        return organization;
+    }
+
+    @Override
+    @Transactional
+    public OrganizationEntity unblock(long id) {
+        OrganizationEntity organization = organizationRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.ORGANIZATION_NOT_FOUND));
+        organization.setStatus(OrganizationStatus.APPROVED);
+        return organization;
     }
 
     @Override

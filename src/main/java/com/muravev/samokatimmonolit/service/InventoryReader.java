@@ -21,5 +21,9 @@ public interface InventoryReader {
 
     InventoryEntity findByIdAsClient(long id);
 
+    InventoryEntity findById(long id);
+
     SortedSet<AbstractInventoryEvent> findEventsById(long id);
+
+    Page<InventoryEntity> findAll(long org, String keyword, Pageable pageable);
 }

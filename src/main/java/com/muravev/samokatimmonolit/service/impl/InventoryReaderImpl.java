@@ -1,12 +1,15 @@
 package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.*;
+import com.muravev.samokatimmonolit.entity.user.ClientEntity;
+import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.AbstractInventoryEvent;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.model.in.MapViewIn;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
+import com.muravev.samokatimmonolit.repo.OrganizationRepo;
 import com.muravev.samokatimmonolit.service.InventoryReader;
 import com.muravev.samokatimmonolit.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.SortedSet;
 @RequiredArgsConstructor
 @Slf4j
 public class InventoryReaderImpl implements InventoryReader {
+    private final OrganizationRepo organizationRepo;
     private final InventoryRepo inventoryRepo;
 
     private final SecurityService securityService;
@@ -102,11 +106,25 @@ public class InventoryReaderImpl implements InventoryReader {
 
     @Override
     @Transactional(readOnly = true)
+    public InventoryEntity findById(long id) {
+        return inventoryRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public SortedSet<AbstractInventoryEvent> findEventsById(long id) {
         InventoryEntity inventory = inventoryRepo.findById(id)
                 .orElseThrow(() -> new ApiException(StatusCode.INVENTORY_NOT_FOUND));
 
         return inventory.getEvents();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<InventoryEntity> findAll(long org, String keyword, Pageable pageable) {
+        OrganizationEntity organization = organizationRepo.getReferenceById(org);
+        return inventoryRepo.findAllByOrganization(keyword, organization, pageable);
     }
 
 }
