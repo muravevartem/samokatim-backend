@@ -7,4 +7,6 @@ public interface PaymentService {
     PaymentOptionsOut pay(RentEntity rent);
 
     PaymentOptionsOut deposit(RentEntity rent);
+
+    PaymentOptionsOut repayPayment(RentEntity rent);
 }

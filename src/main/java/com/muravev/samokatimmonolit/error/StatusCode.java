@@ -33,6 +33,9 @@ public enum StatusCode {
     TARIFF_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Тариф данного типа уже существует", "Удалите существующий тариф аналогичного типа"),
 
     RENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Аренда не найдена"),
+    ALREADY_UNPAID_RENT(HttpStatus.CONFLICT, "Имеется не оплаченная аренда", "Аренда будет доступна после погашения задолженности"),
+    MAX_ACTIVE_RENTS(HttpStatus.BAD_REQUEST, "Исчерпан лимит активным аренд"),
+    CONCURRENCY_STARTING_RENTS(HttpStatus.CONFLICT, "Одновременное начало нескольких аренд"),
 
     FILE_UPLOAD_WITH_ERROR(HttpStatus.BAD_REQUEST, "Ошибка загрузки файла"),
     FILE_DOWNLOAD_WITH_ERROR(HttpStatus.BAD_REQUEST, "Ошибка загрузки файла"),

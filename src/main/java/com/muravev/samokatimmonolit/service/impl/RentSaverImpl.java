@@ -5,6 +5,7 @@ import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.error.ApiException;
 import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.event.InventoryStatusChangedEvent;
+import com.muravev.samokatimmonolit.model.DepositStatus;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.model.RentStatus;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
@@ -49,6 +50,19 @@ public class RentSaverImpl implements RentSaver {
     public PaymentOptionsOut start(RentCreateCommand command) {
         ClientEntity currentClient = securityService.getCurrentClient();
 
+        List<RentEntity> unpaidRents = rentRepo.findAllByClientAndStatus(currentClient, RentStatus.UNPAID);
+        if (unpaidRents.size() > 0)
+            throw new ApiException(StatusCode.ALREADY_UNPAID_RENT);
+
+        List<RentEntity> startingRents = rentRepo.findAllByClientAndStatus(currentClient, RentStatus.STARTING);
+        if (startingRents.size() > 0) {
+            throw new ApiException(StatusCode.CONCURRENCY_STARTING_RENTS);
+        }
+
+        List<RentEntity> activeRents = rentRepo.findAllByClientAndStatus(currentClient, RentStatus.ACTIVE);
+        if (activeRents.size() > 2)
+            throw new ApiException(StatusCode.MAX_ACTIVE_RENTS);
+
         InventoryEntity inventory = inventoryReader.findByIdAsClient(command.inventoryId());
 
         OrganizationTariffEntity tariff = tariffRepo.findById(command.tariffId())
@@ -81,6 +95,13 @@ public class RentSaverImpl implements RentSaver {
         return paymentService.pay(rent);
     }
 
+    @Override
+    public PaymentOptionsOut repay(long id) {
+        RentEntity rent = rentRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
+        return paymentService.repayPayment(rent);
+    }
+
     private void fixationTrack(RentEntity rent) {
         InventoryEntity inventory = rent.getInventory();
         List<InventoryMonitoringEntity> track =
@@ -94,7 +115,7 @@ public class RentSaverImpl implements RentSaver {
         rent.setTrack(filteredTrack);
     }
 
-    @Scheduled(fixedDelay = 30000L)
+    @Scheduled(fixedDelay = 5000L)
     @Transactional
     public void autoCancelStartingRent() {
         List<RentEntity> rents = rentRepo.findAllStartingRents(ZonedDateTime.now().minusMinutes(5));
@@ -102,7 +123,11 @@ public class RentSaverImpl implements RentSaver {
     }
 
     private void cancelRent(RentEntity rent) {
-        inventorySaver.changeStatus(rent.getInventory(), InventoryStatus.PENDING);
-        rent.setStatus(RentStatus.CANCELED);
+        DepositEntity deposit = rent.getDeposit();
+        if (deposit.getStatus() == DepositStatus.PENDING || deposit.getStatus() == DepositStatus.CANCELED) {
+            rent.setStatus(RentStatus.CANCELED);
+            inventorySaver.changeStatus(rent.getInventory(), InventoryStatus.PENDING);
+            deposit.setStatus(DepositStatus.CANCELED);
+        }
     }
 }

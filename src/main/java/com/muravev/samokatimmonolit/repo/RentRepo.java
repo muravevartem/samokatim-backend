@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.repo;
 import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.entity.OrganizationEntity;
 import com.muravev.samokatimmonolit.entity.RentEntity;
+import com.muravev.samokatimmonolit.model.RentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,6 +35,8 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
                                    @Param("client") ClientEntity client);
 
     Optional<RentEntity> findByIdAndClient(Long id, ClientEntity client);
+
+    List<RentEntity> findAllByClientAndStatus(ClientEntity client, RentStatus status);
 
     @Query("""
             SELECT rent FROM RentEntity rent

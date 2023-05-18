@@ -7,4 +7,6 @@ public interface RentSaver {
     PaymentOptionsOut start(RentCreateCommand command);
 
     PaymentOptionsOut end(long id);
+
+    PaymentOptionsOut repay(long id);
 }

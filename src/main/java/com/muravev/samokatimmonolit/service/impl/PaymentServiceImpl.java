@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -48,7 +49,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PaymentOptionsOut pay(RentEntity rent) {
         PaymentEntity cheque = rent.getCheque();
-        if (cheque != null) {
+        if (cheque != null &&
+                cheque.getCreatedAt().plus(1, ChronoUnit.DAYS).isAfter(ZonedDateTime.now())) {
             return new PaymentOptionsOut(rent.getId(), cheque.getUrl());
         }
         OrganizationTariffEntity tariff = rent.getTariff();
@@ -153,6 +155,46 @@ public class PaymentServiceImpl implements PaymentService {
                 rent.getId(),
                 savedDeposit.getUrl()
         );
+    }
+
+    @Override
+    @Transactional
+    public PaymentOptionsOut repayPayment(RentEntity rent) {
+        if (rent.getCheque() == null)
+            throw new ApiException(StatusCode.RENT_NOT_FOUND);
+
+        PaymentEntity cheque = rent.getCheque();
+
+        if (cheque.getStatus() == PaymentStatus.COMPLETED)
+            throw new ApiException(StatusCode.RENT_NOT_FOUND);
+
+        boolean notExpired = ZonedDateTime.now().minus(2, ChronoUnit.DAYS).isAfter(cheque.getCreatedAt());
+
+        if (notExpired && cheque.getStatus() == PaymentStatus.PENDING) {
+            return new PaymentOptionsOut(rent.getId(), cheque.getUrl());
+        }
+
+        cheque.setStatus(PaymentStatus.CREATING)
+                .setCreatedAt(ZonedDateTime.now())
+                .setModifiedAt(ZonedDateTime.now());
+
+        Payment payment = providerPayment.hold(
+                rent.getId().toString(),
+                cheque.getPrice(),
+                "Аренда инвентраря #" + rent.getId(),
+                RETURN_URL,
+                rent.getClient()
+        );
+
+        cheque.setStatus(PaymentStatus.PENDING)
+                .setBankId(payment.id())
+                .setUrl(payment.confirmation().url());
+
+        return new PaymentOptionsOut(
+                rent.getId(),
+                cheque.getUrl()
+        );
+
     }
 
     @Scheduled(fixedDelay = 5000L)

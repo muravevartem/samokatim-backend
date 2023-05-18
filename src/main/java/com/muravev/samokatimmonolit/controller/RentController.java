@@ -84,4 +84,9 @@ public class RentController {
         return rentSaver.end(id);
     }
 
+    @PutMapping("/{id}/repay")
+    public PaymentOptionsOut repay(@PathVariable long id) {
+        return rentSaver.repay(id);
+    }
+
 }
