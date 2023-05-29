@@ -2,10 +2,13 @@ package com.muravev.samokatimmonolit.service.impl;
 
 import com.muravev.samokatimmonolit.entity.*;
 import com.muravev.samokatimmonolit.entity.user.EmployeeEntity;
+import com.muravev.samokatimmonolit.error.ApiException;
+import com.muravev.samokatimmonolit.error.StatusCode;
 import com.muravev.samokatimmonolit.integration.dadata.service.DadataAddressService;
 import com.muravev.samokatimmonolit.model.Address;
 import com.muravev.samokatimmonolit.model.in.GeoPointIn;
 import com.muravev.samokatimmonolit.model.in.command.office.OfficeCreateCommand;
+import com.muravev.samokatimmonolit.model.in.command.office.OfficeScheduleDayModifyCommand;
 import com.muravev.samokatimmonolit.repo.InventoryRepo;
 import com.muravev.samokatimmonolit.repo.OfficeRepo;
 import com.muravev.samokatimmonolit.service.OfficeWriter;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +53,7 @@ public class OfficeWriterImpl implements OfficeWriter {
 
         Address nearest = addresses.stream()
                 .findFirst()
-                .orElseGet(() -> new Address(null));
+                .orElseGet(() -> new Address(null, null, null, "UTC+3"));
 
         OfficeEntity office = new OfficeEntity()
                 .setLat(command.location().lat())
@@ -61,6 +65,23 @@ public class OfficeWriterImpl implements OfficeWriter {
                 .setSchedules(schedules);
 
         return officeRepo.save(office);
+    }
+
+    @Override
+    @Transactional
+    public OfficeEntity modifyScheduleDay(long officeId, OfficeScheduleDayModifyCommand command) {
+        OfficeEntity office = officeRepo.findById(officeId)
+                .orElseThrow(() -> new ApiException(StatusCode.OFFICE_NOT_FOUND));
+
+        List<OfficeScheduleEmbeddable> newSchedule = command.days().stream()
+                .map(day -> new OfficeScheduleEmbeddable()
+                        .setDay(day.day())
+                        .setStart(day.start())
+                        .setEnd(day.end())
+                        .setDayOff(day.dayOff()))
+                .collect(Collectors.toList());
+        office.setSchedules(newSchedule);
+        return office;
     }
 
 }

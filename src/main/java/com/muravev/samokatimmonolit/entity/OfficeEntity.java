@@ -35,6 +35,12 @@ public class OfficeEntity extends AuditEntity {
 
     private String address;
 
+    private String postalCode;
+
+    private String timezone;
+
+    private String fullAddress;
+
     @Column(nullable = false)
     private int capacity;
 

@@ -45,7 +45,10 @@ public class DadataAddressServiceImpl implements DadataAddressService {
             return List.of();
 
         return suggestions.stream()
-                .map(suggestion -> new Address(suggestion.value()))
+                .map(suggestion -> new Address(suggestion.value(),
+                        suggestion.fullValue(),
+                        suggestion.data().postalCode(),
+                        suggestion.data().timezone()))
                 .toList();
     }
 }

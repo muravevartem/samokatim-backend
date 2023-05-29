@@ -7,6 +7,7 @@ import com.muravev.samokatimmonolit.integration.yookassa.service.YooKassaPayment
 import com.muravev.samokatimmonolit.mapper.InventoryMonitoringRecordMapper;
 import com.muravev.samokatimmonolit.mapper.RentMapper;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
+import com.muravev.samokatimmonolit.model.in.command.rent.RentStopCommand;
 import com.muravev.samokatimmonolit.model.out.GeoPositionOut;
 import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 import com.muravev.samokatimmonolit.model.out.RentCompactOut;
@@ -77,6 +78,11 @@ public class RentController {
     @PostMapping
     public PaymentOptionsOut create(@RequestBody @Valid RentCreateCommand command) {
         return rentSaver.start(command);
+    }
+
+    @PutMapping("/{id}/stop")
+    public void stop(@PathVariable long id, @RequestBody RentStopCommand command) {
+        rentSaver.stop(id, command);
     }
 
     @PutMapping("/{id}/complete")

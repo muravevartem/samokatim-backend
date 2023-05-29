@@ -9,8 +9,10 @@ import com.muravev.samokatimmonolit.model.DepositStatus;
 import com.muravev.samokatimmonolit.model.InventoryStatus;
 import com.muravev.samokatimmonolit.model.RentStatus;
 import com.muravev.samokatimmonolit.model.in.command.rent.RentCreateCommand;
+import com.muravev.samokatimmonolit.model.in.command.rent.RentStopCommand;
 import com.muravev.samokatimmonolit.model.out.PaymentOptionsOut;
 import com.muravev.samokatimmonolit.repo.InventoryMonitoringRepo;
+import com.muravev.samokatimmonolit.repo.OfficeRepo;
 import com.muravev.samokatimmonolit.repo.RentRepo;
 import com.muravev.samokatimmonolit.repo.TariffRepo;
 import com.muravev.samokatimmonolit.service.*;
@@ -32,6 +34,7 @@ import static java.util.function.Predicate.not;
 @RequiredArgsConstructor
 @Slf4j
 public class RentSaverImpl implements RentSaver {
+    private final OfficeRepo officeRepo;
     private final RentRepo rentRepo;
     private final TariffRepo tariffRepo;
 
@@ -91,7 +94,6 @@ public class RentSaverImpl implements RentSaver {
         InventoryEntity inventory = rent.getInventory();
         fixationTrack(rent);
         inventorySaver.changeStatus(inventory, InventoryStatus.PENDING);
-        eventPublisher.publishEvent(InventoryStatusChangedEvent.of(inventory, InventoryStatus.PENDING));
         return paymentService.pay(rent);
     }
 
@@ -100,6 +102,22 @@ public class RentSaverImpl implements RentSaver {
         RentEntity rent = rentRepo.findById(id)
                 .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
         return paymentService.repayPayment(rent);
+    }
+
+    @Override
+    public void stop(long id, RentStopCommand command) {
+        RentEntity rent = rentRepo.findById(id)
+                .orElseThrow(() -> new ApiException(StatusCode.RENT_NOT_FOUND));
+        if (rent.getStatus() != RentStatus.ACTIVE)
+            throw new ApiException(StatusCode.RENT_NOT_FOUND);
+
+        rent.setEndTime(ZonedDateTime.now())
+                .setStatus(RentStatus.WAITING_PAYMENT);
+        InventoryEntity inventory = rent.getInventory();
+        OfficeEntity office = officeRepo.getReferenceById(command.officeId());
+        inventory.setOffice(office);
+        inventorySaver.changeStatus(inventory, InventoryStatus.PENDING);
+        paymentService.pay(rent);
     }
 
     private void fixationTrack(RentEntity rent) {

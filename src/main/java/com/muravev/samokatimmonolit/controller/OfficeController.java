@@ -3,6 +3,7 @@ package com.muravev.samokatimmonolit.controller;
 import com.muravev.samokatimmonolit.entity.OfficeEntity;
 import com.muravev.samokatimmonolit.mapper.OfficeMapper;
 import com.muravev.samokatimmonolit.model.in.command.office.OfficeCreateCommand;
+import com.muravev.samokatimmonolit.model.in.command.office.OfficeScheduleDayModifyCommand;
 import com.muravev.samokatimmonolit.model.out.OfficeFullOut;
 import com.muravev.samokatimmonolit.service.OfficeReader;
 import com.muravev.samokatimmonolit.service.OfficeWriter;
@@ -42,6 +43,12 @@ public class OfficeController {
     @PostMapping
     public OfficeFullOut create(@RequestBody @Valid OfficeCreateCommand command) {
         OfficeEntity office = officeWriter.create(command);
+        return officeMapper.toFullDto(office);
+    }
+
+    @PutMapping("/{id}/schedule")
+    public OfficeFullOut changeSchedule(@PathVariable long id, @RequestBody @Valid OfficeScheduleDayModifyCommand command) {
+        OfficeEntity office = officeWriter.modifyScheduleDay(id, command);
         return officeMapper.toFullDto(office);
     }
 

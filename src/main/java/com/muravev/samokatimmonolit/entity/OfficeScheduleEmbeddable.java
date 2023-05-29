@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.time.OffsetTime;
 
 @Embeddable
@@ -18,10 +19,10 @@ public class OfficeScheduleEmbeddable {
     private DayOfWeek day;
 
     @Column(name = "start_time")
-    private OffsetTime start;
+    private LocalTime start;
 
     @Column(name = "end_time")
-    private OffsetTime end;
+    private LocalTime end;
 
     @Column(name = "is_day_off", nullable = false)
     private boolean dayOff;
@@ -36,12 +37,12 @@ public class OfficeScheduleEmbeddable {
         return this;
     }
 
-    public OfficeScheduleEmbeddable setStart(OffsetTime start) {
+    public OfficeScheduleEmbeddable setStart(LocalTime start) {
         this.start = dayOff ? null : start;
         return this;
     }
 
-    public OfficeScheduleEmbeddable setEnd(OffsetTime end) {
+    public OfficeScheduleEmbeddable setEnd(LocalTime end) {
         this.end = dayOff ? null : end;
         return this;
     }

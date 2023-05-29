@@ -18,7 +18,13 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "http://admin.1304294-cu57808.tw1.ru",
                         "https://admin.1304294-cu57808.tw1.ru",
                         "http://1304294-cu57808.tw1.ru",
-                        "https://1304294-cu57808.tw1.ru"
+                        "https://1304294-cu57808.tw1.ru",
+                        "http://b2b.1558885-cu57808.twc1.net",
+                        "https://b2b.1558885-cu57808.twc1.net",
+                        "http://admin.1558885-cu57808.twc1.net",
+                        "https://admin.1558885-cu57808.twc1.net",
+                        "http://1558885-cu57808.twc1.net",
+                        "https://1558885-cu57808.twc1.net"
                 )
                 .allowedHeaders("*")
                 .allowCredentials(true);
