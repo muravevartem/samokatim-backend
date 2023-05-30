@@ -12,10 +12,10 @@ public record ScheduleIn(
         @NotNull
         DayOfWeek day,
         @NotNull
-        @JsonFormat(pattern = JsonTimeFormat.LOCAL_TIME)
+        @JsonFormat(pattern = JsonTimeFormat.LOCAL_SHORT_TIME)
         LocalTime start,
         @NotNull
-        @JsonFormat(pattern = JsonTimeFormat.LOCAL_TIME)
+        @JsonFormat(pattern = JsonTimeFormat.LOCAL_SHORT_TIME)
         LocalTime end,
 
         boolean dayOff
