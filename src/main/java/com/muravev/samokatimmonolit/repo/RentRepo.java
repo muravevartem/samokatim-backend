@@ -23,7 +23,7 @@ public interface RentRepo extends JpaRepository<RentEntity, Long> {
                 AND
                 rent.inventory.lastMonitoringRecord.lat BETWEEN :latSW AND :latNE
                 AND
-                rent.inventory.activeRent.client = :client
+                rent.client = :client
                 AND
                 (rent.status <> 'COMPLETED' AND rent.status <> 'CANCELED')
             ORDER BY rent.inventory.id DESC
