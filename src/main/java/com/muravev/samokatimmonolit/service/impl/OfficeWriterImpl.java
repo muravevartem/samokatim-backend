@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +83,17 @@ public class OfficeWriterImpl implements OfficeWriter {
                         .setDayOff(day.dayOff()))
                 .collect(Collectors.toList());
         office.setSchedules(newSchedule);
+        return office;
+    }
+
+    @Override
+    @Transactional
+    public OfficeEntity close(long officeId) {
+        OfficeEntity office = officeRepo.findById(officeId)
+                .filter(Predicate.not(OfficeEntity::isClosed))
+                .orElseThrow(() -> new ApiException(StatusCode.OFFICE_NOT_FOUND));
+
+        office.setDeletedAt(ZonedDateTime.now());
         return office;
     }
 

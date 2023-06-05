@@ -2,6 +2,7 @@ package com.muravev.samokatimmonolit.entity;
 
 import com.muravev.samokatimmonolit.entity.user.ClientEntity;
 import com.muravev.samokatimmonolit.model.RentStatus;
+import com.muravev.samokatimmonolit.model.RentStopCause;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +43,9 @@ public class RentEntity extends AuditEntity {
 
     @Enumerated(EnumType.STRING)
     private RentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private RentStopCause stopCause;
 
     @ManyToMany
     @JoinTable(

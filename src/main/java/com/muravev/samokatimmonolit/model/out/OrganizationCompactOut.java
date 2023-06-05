@@ -8,6 +8,7 @@ public record OrganizationCompactOut(
         String name,
         String fullName,
         String inn,
-        String kpp
+        String kpp,
+        FileOut logo
 ) {
 }

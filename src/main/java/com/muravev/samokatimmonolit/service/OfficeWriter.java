@@ -10,4 +10,6 @@ public interface OfficeWriter {
     OfficeEntity create(@RequestBody @Valid OfficeCreateCommand command);
 
     OfficeEntity modifyScheduleDay(long officeId, OfficeScheduleDayModifyCommand command);
+
+    OfficeEntity close(long officeId);
 }

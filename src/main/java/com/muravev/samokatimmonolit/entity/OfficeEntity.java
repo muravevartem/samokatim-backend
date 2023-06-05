@@ -60,9 +60,13 @@ public class OfficeEntity extends AuditEntity {
     @OrderBy("day")
     private List<OfficeScheduleEmbeddable> schedules = new ArrayList<>();
 
+    private ZonedDateTime deletedAt;
+
     public boolean isClosed() {
-        return false;
+        return deletedAt != null;
     }
+
+
 
 
     @Override

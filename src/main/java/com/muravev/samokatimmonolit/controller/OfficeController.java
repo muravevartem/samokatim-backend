@@ -52,4 +52,9 @@ public class OfficeController {
         return officeMapper.toFullDto(office);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable long id) {
+        OfficeEntity closedOffice = officeWriter.close(id);
+    }
+
 }

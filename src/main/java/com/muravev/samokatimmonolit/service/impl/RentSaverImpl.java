@@ -112,6 +112,7 @@ public class RentSaverImpl implements RentSaver {
             throw new ApiException(StatusCode.RENT_NOT_FOUND);
 
         rent.setEndTime(ZonedDateTime.now())
+                .setStopCause(command.cause())
                 .setStatus(RentStatus.WAITING_PAYMENT);
         InventoryEntity inventory = rent.getInventory();
         OfficeEntity office = officeRepo.getReferenceById(command.officeId());
@@ -146,6 +147,7 @@ public class RentSaverImpl implements RentSaver {
             rent.setStatus(RentStatus.CANCELED);
             inventorySaver.changeStatus(rent.getInventory(), InventoryStatus.PENDING);
             deposit.setStatus(DepositStatus.CANCELED);
+            log.info("Canceled rent {}", rent.getId());
         }
     }
 }
