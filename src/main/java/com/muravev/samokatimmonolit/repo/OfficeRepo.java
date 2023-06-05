@@ -28,6 +28,8 @@ public interface OfficeRepo extends JpaRepository<OfficeEntity, Long> {
             WHERE office.lng BETWEEN :lngSW AND :lngNE
                 AND
                 office.lat BETWEEN :latSW AND :latNE
+                AND
+                office.organization.status = 'APPROVED'
             ORDER BY office.id DESC
             """)
     List<OfficeEntity> findAllByView(@Param("latNE") double latNE,
